@@ -3,6 +3,8 @@ package home;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -16,9 +18,11 @@ import commands.NewMemberPrompter;
 import commands.Quit;
 import commands.Returns;
 import commands.TicketAutoPrompter;
+import commands.TicketMatchupBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -33,6 +37,7 @@ public class Bot {
 	public static String ticketMessage = "Need help? Click the emote below!";
 	public static MessageEmbed ticketEmbed = null;
 	public static List<Integer> activeTickets = new LinkedList<Integer>();
+	public static List<Integer> activeMatches = new LinkedList<Integer>();
 	
 	//Variables changeable via commands.
 	public static boolean tokenOverride = false;
@@ -99,6 +104,7 @@ public class Bot {
 			jda.addEventListener(new Returns());	
 			jda.addEventListener(new TicketAutoPrompter()); //Removed temporarily.
 			jda.addEventListener(new NewMemberPrompter());
+			jda.addEventListener(new TicketMatchupBuilder());
 			
 			P.print("Ready!");
 			return true;
