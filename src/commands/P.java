@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import home.LazyJavieUI;
+import home.SQLconnector;
+
 /**
  * This is a general-purpose class made to ease the process of doing seemingly menial tasks but somehow isn't.
  * This includes the unnecessarily long System.out.println() function, which can get tedious to type.
@@ -67,7 +70,7 @@ public class P {
 	}
 	
 	//PRINT & SEND
-	public static void printsend(String args)
+	public static void printsend(String args) {}
 	
 	//-------------------------PRIMITIVE BOOLEAN ARRAY-------------------------
 	/**Converts a boolean list into primitive boolean array.
