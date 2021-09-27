@@ -53,7 +53,7 @@ public class P {
 				 * If it is, this will set the console to display only the new text.
 				 * If not, this will set the console to display the old text then appends the new text at the end.
 				 */
-				if (currentConsoleContents.equals(null) || currentConsoleContents.equals("")) {newString = args;}
+				if (currentConsoleContents == null || currentConsoleContents.equals("")) {newString = args;}
 				else {newString = currentConsoleContents + "\n" + args;}
 			}
 			catch (Exception e) {print(e.toString() + "\n" + args); e.printStackTrace();}
