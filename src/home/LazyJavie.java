@@ -1,90 +1,74 @@
-/*
- * This file serves as the initializer for the entire program.
- */
-
 package home;
 
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 
-import javax.security.auth.login.LoginException;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import commands.P;
-import net.dv8tion.jda.api.JDA;
+import commands.Quit;
 
-@Deprecated
 public class LazyJavie {
 	
-	//Initialization of objects and variables
-	public static JDA jda;
-	public static String prefix = "$";
-	public static String token = "";
-	
-	//Startup
-	@Deprecated
-	public static void main(String[] args)  throws LoginException, SQLException{
+	public static void main(String args[]) {
+		P.print("[LazyJavie] Pre-startup sequence...");
+		P.print("|Looking for LazyJavie.db...");
+		String tokenOverride = null;
 		
+		//Checks if the database exists and is functional. If the checker returns false,
+		//this will attempt to create a new empty database ready for use.
+		if (SQLconnector.dbCheck() == false) {
+			P.print("\n[LazyJavie] Attempting to create a new database...");
+			SQLconnector.NoDBfixer("sqlite");
+		}
+		
+		//Tries to access a pre-made table "errorlog". This is for cases where the database check
+		//doesn't detect a blank database with no tables.
+		//This will attempt to create new tables without first trying to delete them.
+		try {
+			P.print("\n[LazyJavie] Attempting to access table 'errorlog'...");
+			SQLconnector.getConn().createStatement().executeQuery("select * from errorlog");
+		} catch (SQLException e) {
+			P.print(e.toString());
+			P.print("|Attempting to create a new database...");
+			SQLconnector.NoDBfixer("sqlite-nodrop");
+		}
+		
+		//Attempts to get a replacement token saved from database.
+		tokenOverride = SQLconnector.get("select * from botsettings where name = 'discord_bot_token_override'", "value", false);
+		
+		//Prompts the bot for startup with the assigned token.
+		P.print("|Attempting to start LazyJavie...");
+		botLauncher("Start", tokenOverride);
 	}
 	
-	//Version handling; this will no longer be used, but will be kept for future reference.
-	@Deprecated
-	public static String version(boolean toUpdate, boolean toPrint) {
-		//Automatic version handling.
-		String version;
-		String defaultVer = "1.0";
-		String build = null;
-		String defaultBuild = "5";
-		String title = null;	//Only set to a proper title BEFORE releasing.
-		int intBuild = 0;
-		try {
-			//TODO Save version in a .json file, not SQL database.
-			version = SQLconnector.get("select * from lazyjavie.version_handler", "ver_release", false);
-			build = SQLconnector.get("select * from lazyjavie.version_handler", "build", false);
+	public static void botLauncher(String task, @Nullable String botTokenOverride) {
+		if (task.equalsIgnoreCase("Start")) {
 			
-			//Checks if build count is empty.
-			if (build.equals("Empty result.")) {
-				P.print("Build not found; setting default...");
-				build = defaultBuild;
-			}
-			else {
-				//Checks if the program encounters an SQL error.
-				if (build.startsWith("Error encountered: java.sql.SQLSyntaxErrorException")) {
-					//Starts the automatic database setup.
-					SQLconnector.NoDBfixer();
-					
-					//Recurs the function from itself.
-					return version(toUpdate, toPrint);
-				}
-
-				//Updates the build number.
-				try {
-					intBuild = Integer.parseInt(build);
-					if (toUpdate == true) intBuild++;
-				}
-				catch (Exception e) {
-					P.print("Error encountered: " + e.toString()); return e.toString();
-				}
-			}
+			//Determines whether the token should be grabbed from the UI or from system.
+			if (botTokenOverride == null) {Bot.tokenOverride = false;}
+			else {Bot.tokenOverride = true; Bot.token = botTokenOverride;}
 			
-			//Checks if the version is empty or if the in-code version is different.
-			if (version.equals("Empty result.") || !version.equals(defaultVer.toString())) {
-				P.print("Version not found; setting default...");
-				version = defaultVer;
-				//SQLconnector.update("insert into lazyjavie.version_handler (ver_release) values (" +version+ ")", false);
-			}
+			/* Finally starts the bot.
+			 * 
+			 * Bot.start() returns a boolean value which corresponds to whether
+			 * it was successful in starting up. Whenever it returns false,
+			 * the following line will close the program automatically.
+			 */
+			P.print("|Awaiting startup...");
+			boolean status = Bot.start();
+			if (status == false) return;
 			
-			//Converts explicitly to 1 decimal place.
-			DecimalFormat df = new DecimalFormat("0.0");
-			version = df.format(Float.parseFloat(version));
+			//Waits until the bot is ready. (Otherwise, the code will continue but the cache isn't yet ready, causing errors.)
+			try {Bot.jda.awaitReady();}
+			catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
-			//Updates the version listing.
-			if (toUpdate == true) SQLconnector.update("insert into lazyjavie.version_handler (ver_release, build, title) values (" +version+ ", " +intBuild+ ", " +title+ ")", false);
-			
-			if (toPrint == true) P.print("LazyJavie v" +version+ " build " +intBuild);
-			return "v" +version+ " build " + intBuild;
+			return;
+		
+		} else {
+			Quit.softExit();
+			return;
 		}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print("Error encountered: " + e.toString()); return e.toString();}
 	}
 }
