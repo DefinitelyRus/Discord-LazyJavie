@@ -34,6 +34,7 @@ public class noDB_autofix {
 				"('ticket_archive_cat_id', null, datetime())," +
 				"('ticket_responder_role_id', null, datetime())," +
 				"('automention_on_join_channel_id', null, datetime())," +
+				"('matchup_message_id', null, datetime()), " +
 				"('matchup_channel_id', null, datetime()), " +
 				"('matchup_category_id', null, datetime())," +
 				"('matchup_archive_cat_id', null, datetime())," +
