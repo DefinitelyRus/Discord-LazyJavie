@@ -69,7 +69,7 @@ public class P {
 			event.getChannel().sendMessage((MessageEmbed) message).queue();
 		}
 	}
-	
+	//
 	public static void delete(Message message) {
 		message.delete().queue();
 	}
