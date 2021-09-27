@@ -12,7 +12,8 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import commands.P;
+
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
 public class dbTable {
@@ -30,7 +31,7 @@ public class dbTable {
 		boolean gotMembers = false;
 		String table = tableList.getSelectedItem();
 		if (table.equals("- Select table -")) {LazyJavieUI.getEntryCounterLabel().setText("No table selected."); return;} //Checks if there are no items selected.
-		else if (table.equals("members")) gotMembers = getMembers(table);
+		else if (table.equals("members")) gotMembers = getMembers();
 		int xCount = 0, yCount = 0;
 		int xy[] = SQLconnector.getXY(table);
 		xCount = xy[0];
@@ -46,7 +47,7 @@ public class dbTable {
 			
 			//Creates a connection to the database, then gets a result set for an entire table.
 			Connection con = DriverManager.getConnection(SQLconnector.DB_ADDRESS, SQLconnector.DB_LOGIN_ID, SQLconnector.getPass());
-			ResultSet results = con.createStatement().executeQuery("select * from "+table);
+			ResultSet results = con.createStatement().executeQuery("select * from " + table);
 			
 			//Updates the table UI.
 			tableGrid.setModel(new DefaultTableModel(getTableContentsByRow(table), getColumnHeaders(yCount, results)) {
@@ -59,7 +60,7 @@ public class dbTable {
 			con.close();
 			
 			//Grammar.
-			if (gotMembers == false) {
+			if (gotMembers == true) {
 				String str;
 				if (xCount == 1) str = " entry found."; else str = " entries found.";
 				LazyJavieUI.getEntryCounterLabel().setText(xCount + str);
@@ -166,24 +167,39 @@ public class dbTable {
 	}
 	
 	//-------------------------GET MEMBERS-------------------------
-	/**
-	 * 
-	 * @param table
-	 */
-	private static boolean getMembers(String table) {
+	public static boolean getMembers() {
 		try {
-			List<Member> membersNew = Bot.getMembers(true);
-			List<String> membersOld = SQLconnector.getList("select * from members", "userid", false);
-			String userid, usertag;
-			P.print("Getting list.");
-			for (Member m : membersNew) {
-				userid = m.getId();
-				usertag = m.getUser().getAsTag();
-				if (membersOld.contains(userid)) continue;
-				else {
-					P.print("New member added to database: " +usertag);
-					SQLconnector.update("insert into members (userid, usertag) values ('" +userid+ "', '" +usertag+ "');", false);
+			//Lists all members the bot can see & excludes all duplicates.
+			List<Member> newMemberList = new LinkedList<Member>();
+			List<Member> allMemberList = new LinkedList<Member>();
+			
+			//Adds all the members from all servers into a list. (Includes duplicates)
+			for (Guild g : Bot.jda.getGuilds()) {allMemberList.addAll(g.getMembers());}
+			
+			//Removes all duplicates.
+			for (Member m : allMemberList) {
+				P.print("Checking for: " + m.getUser().getAsTag());
+				P.print(String.valueOf(newMemberList.size()));
+				
+				//TODO Fix issue. No new members are getting added because there is none to compare it to.
+				for (Member m2 : newMemberList) {
+					P.print("Comparing to: " + m2.getUser().getAsTag());
+					if (m.getIdLong() == m2.getIdLong()) {P.print("Duplicate found: " + m.getUser().getAsTag()); break;}
+					newMemberList.add(m);
 				}
+			}
+			
+			//Deletes all records
+			SQLconnector.update("delete from members", false);
+			
+			//Gets the userId and userTag of every member and adds it into the database.
+			P.print("Getting list.");
+			for (Member m : newMemberList) {
+				String userid = m.getId();
+				String usertag = m.getUser().getAsTag();
+				
+				P.print("New member added to database: " +usertag);
+				SQLconnector.update("insert into members (userid, usertag) values ('" +userid+ "', '" +usertag+ "');", false);
 			}
 			P.print("Done!");
 			return true;

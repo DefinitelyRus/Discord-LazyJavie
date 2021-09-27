@@ -11,10 +11,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import commands.ConsoleCmd;
 import commands.MessageReceivedEvent;
-import commands.P;
 import commands.Quit;
 import home.Bot;
 import home.LazyJavieUI;
+import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -49,31 +49,25 @@ public class ConsoleCallables {
 			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			button.setEnabled(true);
 			
-			//Initializes a list containing all the guilds.
-			List<Guild> guilds = Bot.jda.getGuilds();
 			list.add("- Select text channel -");
 			
-			//Lists all the channels and members from each server.
-			for (Guild g : guilds) {
+			List<Member> membersNew = new LinkedList<Member>();
+			for (Guild g : Bot.jda.getGuilds()) {
+				
+				//Adds all members the bot can see into a list and excludes all duplicates.
+				for (Member m : g.getMembers()) {
+					if (!membersNew.contains(m)) {
+						membersNew.add(m);
+					}
+				}
+				
+				//Lists all text channels in the server for use in UI.
 				for (TextChannel txtCh : g.getTextChannels()) {
 					String label = g.getName() + " | " + txtCh.getName();
 					list.add(label);
 					LazyJavieUI.channelsList.add(txtCh);
 					LazyJavieUI.channelDict.put(label, txtCh);
 				}
-				for (Member m : g.getMembers()) {members.add(m);}
-			}
-			Bot.members = members;
-			
-			for (Member m : Bot.members) {
-				boolean toSkip = false;
-				for (Member m2 : Bot.members) {
-					if (m.equals(m2)) {toSkip = true; break;}
-				}
-				if (toSkip == true) continue;
-				String id = m.getUser().getId();
-				String usertag = m.getUser().getAsTag();
-				SQLconnector.update("insert into members (userid, usertag) values ('" +id+ "', '" + usertag + "');", false);
 			}
 			
 			P.print("Console ready!");

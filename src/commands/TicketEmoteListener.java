@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import home.Bot;
+import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -14,11 +15,11 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class TicketEmoteListener extends ListenerAdapter{
+public class TicketEmoteListener extends ListenerAdapter {
 	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
 		
 		//Prevents bots from triggering this listener.
-		if (event.getUserId().equals(Bot.jda.getSelfUser().getId())) {P.print("[TicketEmoteListener] Self-report! Cancelling..."); return;}
+		if (event.getUserId().equals(Bot.jda.getSelfUser().getId())) {return;}
 		
 		String msg_id1 = event.getMessageId();
 		String msg_id2 = null;
