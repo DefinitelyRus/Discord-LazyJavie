@@ -35,7 +35,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import commands.P;
+
 import home.UI_Functions.ConsoleCallables;
 import net.dv8tion.jda.api.entities.TextChannel;
 import javax.swing.JCheckBox;
@@ -84,7 +84,7 @@ public class LazyJavieUI extends JFrame {
 		P.print("UI Ready!");
 		
 		//Database reset - debugging purposes only. -----------------------------------------------------------------------------------------------------------------
-		//SQLconnector.NoDBfixer();
+		//SQLconnector.NoDBfixer("sqlite");
 		
 		try {
 			TimeUnit.SECONDS.sleep(1);
