@@ -3,9 +3,6 @@ package commands;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import home.Bot;
-import home.LazyJavieUI;
-import home.SQLconnector;
 
 /**
  * This is a general-purpose class made to ease the process of doing seemingly menial tasks but somehow isn't.
@@ -68,6 +65,9 @@ public class P {
 			} catch (Exception e1) {SQLconnector.callError(e1.toString(), ExceptionUtils.getStackTrace(e1)); P.printraw(e1.toString());}
 		}
 	}
+	
+	//PRINT & SEND
+	public static void printsend(String args)
 	
 	//-------------------------PRIMITIVE BOOLEAN ARRAY-------------------------
 	/**Converts a boolean list into primitive boolean array.
