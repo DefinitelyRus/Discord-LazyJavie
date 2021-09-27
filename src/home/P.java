@@ -69,8 +69,15 @@ public class P {
 		}
 	}
 	
-	//PRINT & SEND
-	public static void printsend(String args) {}
+	//-------------------------PRINT & SEND [PROPRIETARY]-------------------------
+	/**
+	 * Prints a specified string to the console and sends to Discord in one method call.
+	 * @param event
+	 * @param message
+	 */
+	public static void printsend(GenericGuildMessageEvent event, String message) {
+		print(message); send(event, message);
+	}
 	
 	//-------------------------PRIMITIVE BOOLEAN ARRAY-------------------------
 	/**Converts a boolean list into primitive boolean array.
