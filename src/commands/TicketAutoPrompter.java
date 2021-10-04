@@ -29,9 +29,9 @@ public class TicketAutoPrompter extends ListenerAdapter {
 	
 	public void onTextChannelCreate (TextChannelCreateEvent event) {
 		String chName = event.getChannel().getName();
-		P.print("New Channel Detected: " + chName);
 		
-		if (!Bot.ticketsEnabled) {P.print("\n[TicketAutoPrompter] (Ignore) Ticket created; response disabled."); return;}
+		if (!Bot.ticketsEnabled && chName.matches("ticket-[0-9]{4}"))
+		{P.print("\n[TicketAutoPrompter] (Ignore) Ticket created; response disabled."); return;}
 		
 		if (chName.matches("ticket-[0-9]{4}")) {
 			TextChannel channel = event.getChannel();
