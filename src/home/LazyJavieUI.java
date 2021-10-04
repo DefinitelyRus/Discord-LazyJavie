@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.login.LoginException;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,7 +37,6 @@ import javax.swing.table.DefaultTableModel;
 
 import home.UI_Functions.ConsoleCallables;
 import net.dv8tion.jda.api.entities.TextChannel;
-import javax.swing.JCheckBox;
 
 
 @SuppressWarnings("serial")
@@ -153,7 +151,7 @@ public class LazyJavieUI extends JFrame {
 		consoleInput.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
-				if (event.getKeyCode() == event.VK_ENTER) {
+				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {ConsoleCallables.send(getTextChannelsList(), getConsoleInput());}
 					catch (IllegalStateException e) {P.print("Cannot send a message without content.");}
 				}
@@ -303,14 +301,6 @@ public class LazyJavieUI extends JFrame {
 	
 	public static JTable getTableGrid() {
 		return tableGrid;
-	}
-	private class SwingAction extends AbstractAction {
-		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
-		}
-		public void actionPerformed(ActionEvent e) {
-		}
 	}
 	public static JButton getStartBotToggle() {
 		return startBotToggle;

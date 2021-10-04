@@ -77,12 +77,13 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			String role_id = null;
 			String cat_id = null;
 			String arc_id = null;
-			String emote1 = ":grey_exclamation:";
-			String emote2 = ":grey_question:";
+			String emote1 = "\u2755";
+			String emote2 = "\u2754";
+			String emote3 = "\u274c";
 			long id = event.getGuild().getIdLong();
 
 			try {role_id = args[1].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Channel name argument missing. Cancelling..."); return;}
+			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			try {channelName = args[2].toLowerCase();}
@@ -105,12 +106,15 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional custom emote 2 not specified. Setting to default...");}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
+			try {emote3 = args[7];}
+			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional custom emote 3 not specified. Setting to default...");}
+			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			
 			//Filters the inputs.
 			role_id = role_id.replace("<@&", "").replace(">", "");
 			categoryName = categoryName.replace('_', ' ');
 			emote1 = emote1.replace("<", "").replace(">", "");
 			emote2 = emote2.replace("<", "").replace(">", "");
-			P.print(emote1 + " " + emote2);
 			
 			//Prints and sends
 			P.print("|Setting '" + channelName + "' as dedicated matchup prompt...");
@@ -172,6 +176,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 					//Adds the reaction emote to the message.
 					m.addReaction(emote1).queue();
 					m.addReaction(emote2).queue();
+					m.addReaction(emote3).queue();
 					P.print("|Emote added to message.");
 					
 					//Saves all IDs to database.

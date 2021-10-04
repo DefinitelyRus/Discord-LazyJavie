@@ -22,7 +22,7 @@ public class noDB_autofix {
 		"create table cmdlog (id int not null, userid varchar(256), userquery varchar(1024), errorid varchar(128), eventdate datetime, primary key(id));",
 		"create table errorlog (err_type varchar(1024), err_stacktrace varchar(65535), eventdate datetime, appver varchar(32));",
 		"create table ticketlog (ticketid varchar(5), userid varchar(128), date_created datetime, date_closed datetime default null, primary key (ticketid));",
-		"create table matchlist (id varchar(128) not null, codename varchar(128), is_matched int not null, primary key(id));",
+		"create table matchlist (id varchar(128) not null, codename varchar(128), matchcode varchar(10), primary key(id));",
 		
 		
 		//Bot Settings: name, value, last_modified

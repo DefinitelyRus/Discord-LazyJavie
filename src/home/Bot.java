@@ -18,6 +18,7 @@ import commands.NewMemberPrompter;
 import commands.Quit;
 import commands.Returns;
 import commands.TicketAutoPrompter;
+import commands.TicketMatchup;
 import commands.TicketMatchupBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -104,6 +105,7 @@ public class Bot {
 			jda.addEventListener(new Returns());	
 			jda.addEventListener(new TicketAutoPrompter()); //Removed temporarily.
 			jda.addEventListener(new NewMemberPrompter());
+			jda.addEventListener(new TicketMatchup());
 			jda.addEventListener(new TicketMatchupBuilder());
 			
 			P.print("Ready!");
