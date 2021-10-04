@@ -43,7 +43,7 @@ public class Returns extends ListenerAdapter{
 		String[] args = event.getMessage().getContentRaw().split("\\s+");
 		String argsFull = event.getMessage().getContentRaw();
 		String requestby = null;
-		boolean isAdmin = event.getMember().hasAccess(event.getGuild().getGuildChannelById(Bot.modRoomId));
+		boolean isAdmin = event.getMember().hasAccess(event.getGuild().getGuildChannelById("857171496254308372"));
 		
 		if (args[0].startsWith(Bot.prefix)) {requestby = event.getMember().getUser().getAsTag();}
 		
