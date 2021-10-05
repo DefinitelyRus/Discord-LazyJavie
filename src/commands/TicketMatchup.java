@@ -210,9 +210,10 @@ public class TicketMatchup extends ListenerAdapter {
 						String emoteCodePoint = event.getReactionEmote().getAsCodepoints();
 						P.print(emoteCodePoint);
 						if (emoteCodePoint.equals("U+1f6d1")) {
-							P.printsend(event, "[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
-							event.retrieveMessage().complete().removeReaction("U+1f6d1", event.getUser());
-							closeMatch(event);
+							P.print("[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
+							P.send(event, "Closing ticket...");
+							event.retrieveMessage().complete().removeReaction("U+1f6d1", event.getUser()).queue();
+							endMatch(event);
 							return;
 						}
 					}
@@ -225,16 +226,53 @@ public class TicketMatchup extends ListenerAdapter {
 	 * Handles the commands associated with the ticket matchup system.
 	 */
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+		TextChannel senderChannel = event.getChannel();
 		String senderChannelName = event.getChannel().getName();
 		Message message = event.getMessage();
+		String[] messageSplit = message.getContentRaw().split("\\s+");
 		List<Attachment> attachments = message.getAttachments();
 		
-		//Testing only
-		if (event.getMessage().getContentRaw().equals("$$")) {
-			SQLconnector.update("delete from matchlist where id = '829651387309752340'", false);
-			SQLconnector.update("insert into matchlist (id, codename, matchcode) values ('829651387309752340', '" + randomName() + "', null)", true);
-			message.delete().queue();
-		} else if (message.getContentRaw().equals(Bot.prefix + "end")) {event.getChannel().delete().queue();}
+		if (messageSplit[0].equals(Bot.prefix + "end") && senderChannel.getName().startsWith("match")) {
+			P.print("\n[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
+			P.send(event, "Closing ticket...");
+			endMatch(event);	
+			return;
+		}
+		else if (messageSplit[0].equals(Bot.prefix + "delete")) {
+			P.print("\n[TicketMatchup] Delete archive request by: " + event.getMember().getUser().getAsTag());
+			//if () {TODO Put admin check here.}
+			
+			//Cancels if the ticket is not yet archived.
+			if (senderChannelName.startsWith("match")) {
+				P.print("Ticket is not yet archived. Cancelling...");
+				P.send(event, "Enter `" + Bot.prefix + "end` first to close the ticket before deleting!");
+			}
+			
+			//Deletes the channels successfully.
+			else if (senderChannelName.startsWith("closed")) {
+				P.print("|Initializing...");
+				String suffix = senderChannelName.replace("closed1-", "").replace("closed2-", "");
+				List<TextChannel> channels = event.getGuild().getTextChannels();
+				
+				for (TextChannel otherChannel : channels) {
+					if (!otherChannel.getName().startsWith("closed")) continue;
+					else if (!otherChannel.getName().endsWith(suffix)) continue;
+					else if (otherChannel.getName().equals(senderChannelName)) continue;
+					P.print("|Deleting channels...");
+					senderChannel.delete().queue();
+					otherChannel.delete().queue();
+					
+					P.print("Channels deleted successfully.");
+					return;
+				}
+				P.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
+				return;
+			}
+			else {
+				P.printsend(event, "This command isn't intended for this channel!");
+				return;
+			}
+		}
 		
 		//Cancels if it's not a match channel OR if the bot receives a message from itself.
 		if (!senderChannelName.startsWith("match") || event.getMember().getId().equals(Bot.jda.getSelfUser().getId())) return;
@@ -360,57 +398,54 @@ public class TicketMatchup extends ListenerAdapter {
 				}
 				
 				//Sends another message telling the user their alias that the other side can see.
-				try {t.sendMessage("*You are talking to **" + codenames[(index-1)*(index-1)] + "** and you will be known as **" + codenames[index] + "**.*").queue();}
+				try {t.sendMessage(matchPair[index].getAsMention() + ", *you are talking to **" + codenames[(index-1)*(index-1)] + "** and you will be known as **" + codenames[index] + "**.*").queue();}
 				catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 				index++;
 			}
 		}
 	}
 	
-	private void closeMatch(GenericGuildMessageEvent event) {
+	private void endMatch(GenericGuildMessageEvent event) {
 		P.print("|Initializing...");
-		//TODO FIIIIIIIIIIIIIIIIIIIIIIIIIIIX
 		for (TextChannel otherChannel : event.getGuild().getTextChannels()) {
 			TextChannel senderChannel = event.getChannel();
 			String name = otherChannel.getName();
 			String suffix = senderChannel.getName().replace("match1-", "").replace("match2-", "");
 			String prefix = senderChannel.getName().replace(suffix, "");
-			if (name.endsWith(suffix) && !name.startsWith(prefix)) {
+			if (name.endsWith(suffix) && !name.equals(senderChannel.getName())) {
 				Category archive = event.getGuild().getCategoryById(
 						SQLconnector.get("select value from botsettings where name = 'matchup_archive_cat_id'", "value", false));
 				ChannelManager c1Manager = senderChannel.getManager();
 				ChannelManager c2Manager = otherChannel.getManager();
-				//Creates a list of permissions intended for normal messaging only.
 				List<Permission> perms = new LinkedList<Permission>();
 				perms.add(Permission.VIEW_CHANNEL); perms.add(Permission.MESSAGE_ADD_REACTION);
 				perms.add(Permission.MESSAGE_ATTACH_FILES); perms.add(Permission.MESSAGE_EXT_EMOJI);
 				perms.add(Permission.MESSAGE_HISTORY); perms.add(Permission.MESSAGE_READ);
 				perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
-				List<String> memberIdList = (SQLconnector.getList("select id from matchlist where matchcode = '" + suffix + "'", "id", false));
-				
+				List<String> memberIdList = (SQLconnector.getList("select * from matchlist where matchcode = '" + suffix + "'", "id", false));
 				
 				//Changes name to closed1-xxxxx and closed2-xxxxx.
-				P.print("|Renaming channels...");
-				c1Manager.setName(senderChannel.getName().replace("match", "closed")).queue();
-				c2Manager.setName(name.replace("match", "closed")).queue();
+				P.print("|Archiving " + senderChannel.getName() + "...");
+				c1Manager.setName(senderChannel.getName().replace("match", "closed"))
+				.setParent(archive)
+				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(2)), null, perms)
+				.queue();
+
+				P.print("|Archiving " + otherChannel.getName() + "...");
+				c2Manager.setName(name.replace("match", "closed"))
+				.setParent(archive)
+				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(1)), null, perms)
+				.queue();
 				
-				//Moves the channels to the archive category.
-				P.print("|Moving to archives...");
-				c1Manager.setParent(archive).queue();
-				c2Manager.setParent(archive).queue();
+				P.print("|Deleting leftover records from database...");
+				SQLconnector.update("delete from matchlist where matchcode = '" + suffix + "'", false);
 				
-				//Removes the read and chat permissions from the members.
-				//WARNING: This is rate limited. Certain aspects of a channel can only be updated in script every 10 minutes.
-				P.print("|Removing user permissions...");
-				senderChannel.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(1))).deny(perms).queue();
-				senderChannel.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(2))).deny(perms).queue();
-				//c1Manager.removePermissionOverride(event.getGuild().getMemberById(memberIdList.get(1))).complete();
-				//c2Manager.removePermissionOverride(event.getGuild().getMemberById(memberIdList.get(2))).complete();
-				
-				P.print("All done! Channel updates are rate-limited and can only be updated every 10 minutes.");
+				P.printsend(event, "Ticket has been archived!");
 				return;
 			}
 		}
+		P.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
+		return;
 	}
 	
 	//TODO Move this to P.java
@@ -441,7 +476,7 @@ public class TicketMatchup extends ListenerAdapter {
 		String string = "";
 		final char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-				'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '_', '+'};
+				'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 		
 		for (int i = 0; i < length; i++) {
 			char randomChar = chars[RandomUtils.nextInt(0, chars.length-1)];
