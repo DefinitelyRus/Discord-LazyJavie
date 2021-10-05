@@ -323,7 +323,15 @@ public class TicketMatchup extends ListenerAdapter {
 		}
 	}
 
-	
+	/**
+	 * Creates a new ticket.
+	 * This 
+	 * @param matchPair
+	 * @param codenames
+	 * @param isAnon
+	 * @param randomString
+	 * @param event
+	 */
 	private void newMatch(Member[] matchPair, String[] codenames, boolean isAnon, String randomString, GenericGuildMessageEvent event) {
 		//TODO Create 1 channel and give both members permission to talk.
 		
@@ -349,8 +357,7 @@ public class TicketMatchup extends ListenerAdapter {
 			perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
 		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.printsend(event, e.toString()); return;}
 		
-		//Creates two channels, gives each member permissions to chat in each one,
-		//then 
+		//Creates two channels, gives each member permissions to chat in each one.
 		if (isAnon == true) {
 			//Creates two channels based on the same randomized string.
 			catg.createTextChannel(newMatch1Name).complete().createPermissionOverride(matchPair[0]).setAllow(perms).queue();
@@ -405,13 +412,20 @@ public class TicketMatchup extends ListenerAdapter {
 		}
 	}
 	
+	/**
+	 * Closes and archives the ticket.
+	 * This will rename the channels, move to the archives category, and remove member permissions.
+	 * <br><br>
+	 * The channels can only be accessed using $viewArchive command.
+	 * @param event The source event from which the changes will be made.
+	 */
 	private void endMatch(GenericGuildMessageEvent event) {
+		//Initialization
 		P.print("|Initializing...");
 		for (TextChannel otherChannel : event.getGuild().getTextChannels()) {
 			TextChannel senderChannel = event.getChannel();
 			String name = otherChannel.getName();
 			String suffix = senderChannel.getName().replace("match1-", "").replace("match2-", "");
-			String prefix = senderChannel.getName().replace(suffix, "");
 			if (name.endsWith(suffix) && !name.equals(senderChannel.getName())) {
 				Category archive = event.getGuild().getCategoryById(
 						SQLconnector.get("select value from botsettings where name = 'matchup_archive_cat_id'", "value", false));
