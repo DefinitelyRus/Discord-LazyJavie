@@ -405,7 +405,8 @@ public class TicketMatchup extends ListenerAdapter {
 				}
 				
 				//Sends another message telling the user their alias that the other side can see.
-				try {t.sendMessage(matchPair[index].getAsMention() + ", *you are talking to **" + codenames[(index-1)*(index-1)] + "** and you will be known as **" + codenames[index] + "**.*").queue();}
+				try {t.sendMessage(matchPair[index].getAsMention() + ", *you are talking to **"
+				+ codenames[(index-1)*(index-1)] + "** and you will be known as **" + codenames[index] + "**.*").queue();}
 				catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 				index++;
 			}
