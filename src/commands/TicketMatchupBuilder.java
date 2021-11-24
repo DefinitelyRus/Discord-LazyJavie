@@ -83,15 +83,15 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			long id = event.getGuild().getIdLong();
 
 			try {role_id = args[1].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); return;}
+			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			try {channelName = args[2].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Channel name argument missing. Cancelling..."); return;}
+			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Channel name argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 
 			try {categoryName = args[3].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Category name argument missing. Cancelling..."); return;}
+			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Category name argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 
 			try {archiveName = args[4];}
@@ -219,5 +219,24 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			P.print("Done!");
 			return;
 		}
+	}
+
+	private void sendFail(GuildMessageReceivedEvent event) {
+		String descText = "\n`" + Bot.prefix + "setMatchupChannel <@role>¹ <channel-name>² <category_name>³ <archive_name>* <:emote1:>* <:emote2:>* <:emote3:>*`\n\n" +
+							"[1] @mention the role you want to assign as moderators." +
+							"[2] Don't #mention the text channel, only enter the name.\n" +
+							"[3] Use underscores ( _ ) instead of spaces for entering categories.\n" +
+							"[*] Optional parameters. You can skip these.\n\n" +
+							"Sample command:\n `" + Bot.prefix + "setMatchupChannel @Moderators chat-matchup matchup_channels archive_channels :dab:`\n\n" +
+							"You can use `" + Bot.prefix + "setMatchupMessage` OR `" + Bot.prefix + "setMatchupEmbed` to change the queue manager message. " +
+							"You can also change the archive category after creating the queue manager using `" + Bot.prefix + "setArchiveCategory`.";
+		String footText = "Made with ❤ by DefinitelyRus.";
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setColor(0xD82D42);
+		builder.setTitle("That's not how you do it!");
+		builder.setDescription(descText);
+		builder.setFooter(footText);
+		P.send(event, builder.build());
+		return;
 	}
 }
