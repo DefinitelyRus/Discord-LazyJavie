@@ -3,14 +3,10 @@ package home.UI_Functions;
 import java.awt.Choice;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import commands.ConsoleCmd;
-import commands.MessageReceivedEvent;
 import commands.Quit;
 import home.Bot;
 import home.LazyJavieUI;
@@ -32,7 +28,6 @@ public class ConsoleCallables {
 			LazyJavieUI.getConsoleInput().setEnabled(true);
 			LazyJavieUI.getSendButton().setEnabled(true);
 			LazyJavieUI.getConsoleOutput().setEnabled(true);
-			List<Member> members = new LinkedList<Member>();
 			
 			//Determines whether the token should be grabbed from the UI or from system.
 			String bottoken = String.valueOf(LazyJavieUI.getBotTokenField().getPassword());
