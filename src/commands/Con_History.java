@@ -31,3 +31,5 @@ public class Con_History {
 		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 	}
 }
+
+//Where is this used? Presumably made for retrieving the contents of the UI console but where exactly?
