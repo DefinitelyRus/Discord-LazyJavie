@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class TicketHostBuilder extends ListenerAdapter{
+	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 		String[] args = event.getMessage().getContentRaw().split("\\s+");
 		String argsRaw = event.getMessage().getContentRaw();
@@ -141,8 +142,8 @@ public class TicketHostBuilder extends ListenerAdapter{
 				P.print("|Sending prompt message...");
 				
 				//Checks if there is a preset ticket message or embed, then uses it.
-				if (Bot.ticketEmbed.equals(null)) ch.sendMessage(Bot.ticketMessage).queue();
-				else if (Bot.ticketMessage.equals(null)) ch.sendMessage(Bot.ticketEmbed).queue();
+				if (Bot.ticketEmbed == null) ch.sendMessage(Bot.ticketMessage).queue();
+				else if (Bot.ticketMessage == null) ch.sendMessage(Bot.ticketEmbed).queue();
 				else ch.sendMessage("Need help? Click the emote below!").queue();
 				
 				//1 second delay for cache refresh.
