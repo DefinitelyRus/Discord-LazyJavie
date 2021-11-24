@@ -2,8 +2,11 @@ package commands;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import home.Bot;
+import home.DiscordUtil;
 import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,7 +28,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			P.print("Set matchup message request by " + event.getMember().getUser().getAsTag() + ".");
 			Bot.ticketEmbed = null;
 			Bot.ticketMessage = argsRaw;
-			P.send(event, "Set matchup prompt message to '" + argsRaw + "'. Waiting for '" + Bot.prefix + "setMatchupChannel <args...>'...");
+			DiscordUtil.send(event, "Set matchup prompt message to '" + argsRaw + "'. Waiting for '" + Bot.prefix + "setMatchupChannel <args...>'...");
 		}
 		
 		//Presets the matchup message to a custom-made embed.
@@ -83,31 +86,31 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			long id = event.getGuild().getIdLong();
 
 			try {role_id = args[1].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); sendFail(event); return;}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			try {channelName = args[2].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Channel name argument missing. Cancelling..."); sendFail(event); return;}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Channel name argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 
 			try {categoryName = args[3].toLowerCase();}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Category name argument missing. Cancelling..."); sendFail(event); return;}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Category name argument missing. Cancelling..."); sendFail(event); return;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 
 			try {archiveName = args[4];}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional archive category not specified. Setting to default..."); archiveName = categoryName;}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional archive category not specified. Setting to default..."); archiveName = categoryName;}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			try {emote1 = args[5];}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional custom emote 1 not specified. Setting to default...");}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 1 not specified. Setting to default...");}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 
 			try {emote2 = args[6];}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional custom emote 2 not specified. Setting to default...");}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 2 not specified. Setting to default...");}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			try {emote3 = args[7];}
-			catch (ArrayIndexOutOfBoundsException e) {P.printsend(event, "Optional custom emote 3 not specified. Setting to default...");}
+			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 3 not specified. Setting to default...");}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			//Filters the inputs.
@@ -120,9 +123,9 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			P.print("|Setting '" + channelName + "' as dedicated matchup prompt...");
 			P.print("|Setting '" + categoryName + "' as dedicated matchup category...");
 			P.print("|Setting '" + archiveName + "' as dedicated archive category...");
-			P.send(event, "Setting `" + channelName + "` as dedicated matchup prompt...");
-			P.send(event, "Setting `" + categoryName + "` as dedicated matchup category...");
-			P.send(event, "Setting `" + archiveName + "` as dedicated archive category...");
+			DiscordUtil.send(event, "Setting `" + channelName + "` as dedicated matchup prompt...");
+			DiscordUtil.send(event, "Setting `" + categoryName + "` as dedicated matchup category...");
+			DiscordUtil.send(event, "Setting `" + archiveName + "` as dedicated archive category...");
 			
 			
 			//CATEGORY ID ASSIGNMENT
@@ -135,7 +138,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			}
 			
 			//Checks if cat_id is null as a result of not finding such named category.
-			if (cat_id == null) {P.printsend(event, "Category name argument missing. Cancelling..."); return;}
+			if (cat_id == null) {DiscordUtil.printsend(event, "Category name argument missing. Cancelling..."); return;}
 			
 			
 			//ARCHIVE ID ASSIGNMENT
@@ -150,7 +153,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 			}
 
 			//Checks if arc_id is null as a result of not finding such named category.
-			if (arc_id == null) {P.printsend(event, "Optional archive category not specified. Setting to default..."); arc_id = cat_id;}
+			if (arc_id == null) {DiscordUtil.printsend(event, "Optional archive category not specified. Setting to default..."); arc_id = cat_id;}
 			
 			
 			//FIND CHANNEL
@@ -189,7 +192,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 					SQLconnector.update("update botsettings set value = '" + msg_id  + "' where name = 'matchup_message_id'", false);
 					SQLconnector.update("update botsettings set value = '" + role_id + "' where name = 'matchup_moderator_role_id'", false);
 					
-					P.printsend(event, "Matchup prompt fully created.");
+					DiscordUtil.printsend(event, "Matchup prompt fully created.");
 					return;
 				}
 			}
@@ -236,7 +239,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 		builder.setTitle("That's not how you do it!");
 		builder.setDescription(descText);
 		builder.setFooter(footText);
-		P.send(event, builder.build());
+		DiscordUtil.send(event, builder.build());
 		return;
 	}
 }

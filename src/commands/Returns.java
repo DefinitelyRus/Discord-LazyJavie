@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import home.Bot;
+import home.DiscordUtil;
 import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -80,7 +81,7 @@ public class Returns extends ListenerAdapter{
 			embed.setTitle(":white_check_mark: Test success!");
 			embed.setFooter("Requested by " + requestby , event.getMember().getUser().getAvatarUrl());
 			
-			P.send(event, embed.build());
+			DiscordUtil.send(event, embed.build());
 			return;
 		}
 		
@@ -171,7 +172,7 @@ public class Returns extends ListenerAdapter{
 			
 			//P.print(userId);
 			
-			P.send(event, "||" + event.getGuild().getMemberById(userId).getUser().getAsMention() + "Never gonna give you up~ Never gonna let you down~ Never gonna run around and desert you~||");
+			DiscordUtil.send(event, "||" + event.getGuild().getMemberById(userId).getUser().getAsMention() + "Never gonna give you up~ Never gonna let you down~ Never gonna run around and desert you~||");
 			return;
 		}
 		

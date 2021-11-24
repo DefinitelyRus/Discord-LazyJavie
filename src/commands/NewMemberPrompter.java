@@ -2,8 +2,11 @@ package commands;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import home.Bot;
+import home.DiscordUtil;
 import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.Permission;
@@ -28,21 +31,22 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 //TODO Allow for server-specific settings.
 public class NewMemberPrompter extends ListenerAdapter{
 	
-	//A GuildMemberJoinEvent listener where new members are mentioned in a specified channel
-	//upon joining, most useful for forcing them to read rules.
+	/**
+	 * A GuildMemberJoinEvent listener where new members are mentioned in a specified channel upon joining, most useful for forcing them to read rules.
+	 */
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		Member member = event.getMember();
 		Guild guild = event.getGuild();
 		String targetChannelID = SQLconnector.get("select * from botsettings where name = 'automention_on_join_channel_id'", "value", false);
 		TextChannel channel = guild.getTextChannelById(targetChannelID);
 		
-		//Creates a message that includes instructions for everyone in case the deletion doesn't work out as planned.
+		//Creates a message that includes instructions for everyone in case the deletion fails.
 		P.print("\n[NewMemberPrompter] New member detected. Prompting " + member.getUser().getAsTag() + "...");
-		channel.sendMessage("<@NMP> " + member.getAsMention() + ", if you see this, please read the rules. If this message doesn't get deleted, tell a staff member.").queue();
+		channel.sendMessage("<@NMP> " + member.getAsMention() + ", if you see this, please read the rules. If this message doesn't get deleted, please tell a staff member.").queue();
 		P.print("|Member mentioned in #" + channel.getName() + ". Deleting message...");
 		
 		/* 
-		 * Waits for 0.2 seconds so the local cache can refresh.
+		 * Waits for 1 second so the local cache can refresh.
 		 * Otherwise, the wrong message will be deleted and the new one will remain.
 		 * 
 		 * This should be replaced with a more reliable waiting method.
@@ -61,7 +65,9 @@ public class NewMemberPrompter extends ListenerAdapter{
 	
 	//Commands related to the feature above.
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-		if (!event.getMessage().getContentRaw().startsWith(Bot.prefix)) return;
+		
+		if (!event.getMessage().getContentRaw().startsWith(Bot.prefix)) return; //Prevents the bot from activating itself.
+		
 		String[] args = event.getMessage().getContentRaw().split("\\s+");
 		
 		//-------------------------SET AUTOMENTION CHANNEL-------------------------
@@ -75,7 +81,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 			try {channelId = args[1];}
 			catch (ArrayIndexOutOfBoundsException e) {
 				P.print("args[1] is empty.");
-				P.send(event, "Missing argument. Mention the channel you want to set or enter its ID.");
+				DiscordUtil.send(event, "Missing argument. Mention the channel you want to set or enter its ID.");
 				return;
 			}
 			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return;}
@@ -86,7 +92,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 			channelId = channelId.replace(">", "");
 			channelId = channelId.replace("#", "");
 			
-			P.send(event, "Attempting to set auto-mention to " + args[1] + ". You will receive a mention there during this.");
+			DiscordUtil.send(event, "Attempting to set auto-mention to " + args[1] + ". You will receive a mention there during this.");
 			
 			//----------TESTING PHASE----------
 			//Attempts to mention the sender to the target channel.
@@ -95,32 +101,34 @@ public class NewMemberPrompter extends ListenerAdapter{
 			//Triggered when entering gibberish or a non-text channel ID.
 			catch (NumberFormatException e) {
 				P.print("args[1] is not a valid TextChannel ID.");
-				P.send(event, args[1] + " is not a valid text channel ID.");
+				DiscordUtil.send(event, args[1] + " is not a valid text channel ID.");
 				return;
 			}
 			//Possibly triggered if ID belongs to a channel from other servers the bot doesn't recognize.
 			catch (NullPointerException e) {
 				P.print("This ID might belong to a text channel outside the bot's scope. Invite the bot there if this is your intended target.");
-				P.send(event, "This ID might belong to a text channel outside the bot's scope. Invite the bot there if this is your intended target.");
+				DiscordUtil.send(event, "This ID might belong to a text channel outside the bot's scope. Invite the bot there if this is your intended target.");
 				return;
 			}
 			//Every other error that may occur.
 			catch (Exception e) {
 				P.print("Unknown error encountered:\n" + ExceptionUtils.getStackTrace(e));
-				P.send(event, "Unknown error encountered: `" + e.toString() + "`.\nCheck console for more details.");
+				DiscordUtil.send(event, "Unknown error encountered: `" + e.toString() + "`.\nCheck console for more details.");
 				return;
 			}
 			
-			//Same issue.
+			//Same caching issue.
 			P.print("|Waiting for cache to refresh...");
 			try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			
 			P.print("|Getting message history...");
 			List<Message> msg = guild.getTextChannelById(channelId).getHistory().retrievePast(1).complete();
+			
 			P.print("|Deleting message...");
 			msg.forEach((m) -> m.delete().queue());
 			
 			P.print("|Test done. Updating database...");
-			P.send(event, "Test done. Check if everything works as expected.");
+			DiscordUtil.send(event, "Test done. Check if everything works as expected.");
 			
 			//----------FINALIZING----------
 			//Updating the local settings database.
@@ -128,6 +136,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 			SQLconnector.update("update botsettings set value = '" + channelId + "' where name = 'automention_on_join_channel_id'", false);
 			SQLconnector.update("update botsettings set last_modified = datetime() where name = 'automention_on_join_channel_id'", false);
 			P.print("Setup successful.");
+			
 			return;
 		}
 	}

@@ -5,10 +5,13 @@ import java.time.temporal.TemporalAccessor;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
+
 import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import home.Bot;
+import home.DiscordUtil;
 import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,7 +21,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -278,7 +280,7 @@ public class TicketMatchup extends ListenerAdapter {
 						String emoteCodePoint = event.getReactionEmote().getAsCodepoints();
 						if (emoteCodePoint.equals("U+1f6d1")) {
 							P.print("[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
-							P.send(event, "Closing ticket...");
+							DiscordUtil.send(event, "Closing ticket...");
 							event.retrieveMessage().complete().removeReaction("U+1f6d1", event.getUser()).queue();
 							endMatch(event);
 							return;
@@ -302,7 +304,7 @@ public class TicketMatchup extends ListenerAdapter {
 		//[END]
 		if (messageSplit[0].equals(Bot.prefix + "end") && senderChannel.getName().startsWith("match")) {
 			P.print("\n[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
-			P.send(event, "Closing ticket...");
+			DiscordUtil.send(event, "Closing ticket...");
 			endMatch(event);	
 			return;
 		}
@@ -312,19 +314,12 @@ public class TicketMatchup extends ListenerAdapter {
 			P.print("\n[TicketMatchup] Delete archive request by: " + event.getMember().getUser().getAsTag());
 			
 			//Checks if the sender has an admin role.
-			boolean isAdmin = false;
-			Pattern pattern = Pattern.compile("Admin", Pattern.CASE_INSENSITIVE);
-			for (Role r : event.getMember().getRoles()) {
-				String roleName = r.getName();
-				if (pattern.matcher(roleName).find()) {
-					isAdmin = true;
-					break;
-				}
-			}
+			boolean isAdmin = DiscordUtil.isUserAdmin(event, "both");
+			
 			
 			//Cancels if isAdmin remains false.
 			if (isAdmin == false) {
-				P.send(event, "You don't have permissions to do that!");
+				DiscordUtil.send(event, "You don't have permissions to do that!");
 				P.print("Insufficient permissions.");
 				return;
 			}
@@ -332,7 +327,7 @@ public class TicketMatchup extends ListenerAdapter {
 			//Cancels if the ticket is not yet archived.
 			if (senderChannelName.startsWith("match")) {
 				P.print("Ticket is not yet archived. Cancelling...");
-				P.send(event, "Enter `" + Bot.prefix + "end` first to close the ticket before deleting!");
+				DiscordUtil.send(event, "Enter `" + Bot.prefix + "end` first to close the ticket before deleting!");
 				return;
 			}
 			
@@ -353,11 +348,11 @@ public class TicketMatchup extends ListenerAdapter {
 					P.print("Channels deleted successfully.");
 					return;
 				}
-				P.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
+				DiscordUtil.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
 				return;
 			}
 			else {
-				P.printsend(event, "This command isn't intended for this channel!");
+				DiscordUtil.printsend(event, "This command isn't intended for this channel!");
 				return;
 			}
 		}
@@ -443,7 +438,7 @@ public class TicketMatchup extends ListenerAdapter {
 			perms.add(Permission.MESSAGE_ATTACH_FILES); perms.add(Permission.MESSAGE_EXT_EMOJI);
 			perms.add(Permission.MESSAGE_HISTORY); perms.add(Permission.MESSAGE_READ);
 			perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
-		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.printsend(event, e.toString()); return;}
+		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); DiscordUtil.printsend(event, e.toString()); return;}
 		
 		//Creates two channels, gives each member permissions to chat in each one.
 		if (isAnon == true) {
@@ -553,11 +548,11 @@ public class TicketMatchup extends ListenerAdapter {
 				P.print("|Deleting leftover records from database...");
 				SQLconnector.update("delete from matchlist where matchcode = '" + matchCode + "'", false);
 				
-				P.printsend(event, "Ticket has been archived!");
+				DiscordUtil.printsend(event, "Ticket has been archived!");
 				return;
 			}
 		}
-		P.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
+		DiscordUtil.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
 		return;
 	}
 	

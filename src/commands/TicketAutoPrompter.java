@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import home.Bot;
+import home.DiscordUtil;
 import home.P;
 import home.SQLconnector;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -140,7 +141,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 			//[@0]		----------------------------------------------------------------------------------------------------
 			//DONE
 			if (coords.equals("<@0>")) {
-				P.delete(m);
+				DiscordUtil.delete(m);
 				switch (emoteCodePoint) {
 				
 				//[@1] Path newJoin
@@ -179,25 +180,25 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					
 					//[@1-1] Path nonPremiun
 					case cp1:
-						P.delete(m);
+						DiscordUtil.delete(m);
 						nonPremium(event);
 						break;
 						
 					//[@1-2] TODO Path badIp
 					case cp2:
-						P.delete(m);
+						DiscordUtil.delete(m);
 						badIp(event);
 						break;
 					
 					//[@1-3] TODO Path discordNotLinked
 					case cp3:
-						P.delete(m);
+						DiscordUtil.delete(m);
 						discordNotLinked(event);
 						break;
 						
 					//[@1-4] TODO Path otherBadConn
 					case cp4:
-						P.delete(m);
+						DiscordUtil.delete(m);
 						unspecificQuery(event);
 						break;
 					}
@@ -212,7 +213,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 						
 						//[@1-1-1] Path needWhitelist		-------------------------
 						case cp1:
-							P.delete(m);
+							DiscordUtil.delete(m);
 							needWhitelist(event);
 							return;
 						}
@@ -222,8 +223,8 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//DONE
 					else if (coords.equals("<@1-1-1>")) {
 						if (emoteCodePoint.equals(cpCheck)) {
-							P.delete(m);
-							P.send(event, "The <@&311398364237266945> will be assisting you as soon as possible. Please remain patient.");
+							DiscordUtil.delete(m);
+							DiscordUtil.send(event, "The <@&311398364237266945> will be assisting you as soon as possible. Please remain patient.");
 							return;
 						}
 					}
@@ -271,7 +272,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 				
 				//[@2] Path lostItem				--------------------------------------------------
 				if (coords.equals("<@2>")) {
-					P.delete(m);
+					DiscordUtil.delete(m);
 				}
 
 				//[@2-1] Path deathLost				-------------------------
@@ -294,7 +295,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 
 				//[@3] Path griefTheft				--------------------------------------------------
 				if (coords.equals("<@3>")) {
-					P.delete(m);
+					DiscordUtil.delete(m);
 				}
 			}
 			
@@ -302,7 +303,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 				
 				//[@4] cantConnect					--------------------------------------------------
 				if (coords.equals("<@4>")) {
-					P.delete(m);
+					DiscordUtil.delete(m);
 				}
 			}
 		}
@@ -323,7 +324,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(500);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -375,7 +376,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1-1>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -417,7 +418,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1-1-1>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -450,7 +451,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1-2>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -499,7 +500,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1-1>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -546,7 +547,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@2>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -593,7 +594,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@3>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -642,7 +643,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@1-1>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 		
 		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
@@ -692,6 +693,6 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setDescription(desc);
 		embed.setFooter(footer);
 		embed.setAuthor("TetrabearMC <@5>");
-		P.send(event, embed.build());
+		DiscordUtil.send(event, embed.build());
 	}
 }
