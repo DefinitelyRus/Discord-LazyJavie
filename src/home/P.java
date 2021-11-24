@@ -1,10 +1,13 @@
 package home;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -106,6 +109,54 @@ public class P {
 	        primitives[index++] = object;
 	    }
 	    return primitives;
+	}
+	
+	//-------------------------RANDOM STRING-------------------------
+	/**A random string generator.
+	 * 
+	 * @param length - The number of random characters to be returned.
+	 * @param withCaps - Whether to return capitalized letters.
+	 * @return A randomized alphanumerical string.
+	 */
+	public static String randomString(int length, boolean withCaps) {
+		if (length < 1) return "";
+		
+		String string = "";
+		final char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+				'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+		
+		for (int i = 0; i < length; i++) {
+			char randomChar = chars[RandomUtils.nextInt(0, chars.length-1)];
+			string = string + randomChar;
+		}
+		
+		if (withCaps) return string;
+		else return string.toLowerCase();
+	}
+
+	//-------------------------RANDOM NAME GENERATOR-------------------------
+	/**Random name generator.
+	 * 
+	 * @return A random name selected from a pre-made list.
+	 */
+	public static String randomName() {
+		String name = null;
+		
+		//TODO Make use of SQLite to allow for additional and/or custom lists.
+		List<String> names = new LinkedList<String>();
+		names.add("Falcon"); names.add("Chief"); names.add("Flower"); names.add("Northern Light"); names.add("Iceberg"); names.add("Amber");
+		names.add("Eagle"); names.add("Fox"); names.add("Macro"); names.add("Niner"); names.add("Savanna"); names.add("Astley"); names.add("Locke");
+		names.add("Opera"); names.add("Nickel"); names.add("Coiler"); names.add("Mongus"); names.add("Pinkel"); names.add("Copper");
+		
+		int i = 0;
+		try {i = RandomUtils.nextInt(0, names.size()-1);}
+		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return names.get(0);}
+		
+		//Assign a random name. Recurse if it returns null.
+		name = names.get(i);
+		if (name == null) name = randomName();
+		return name;
 	}
 	
 	//-------------------------[PROPRIETARY] DISCORD SEND MESSAGE-------------------------
