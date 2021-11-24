@@ -5,14 +5,9 @@ import java.time.temporal.TemporalAccessor;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-
-import com.sun.jdi.event.Event;
-
 import home.Bot;
 import home.P;
 import home.SQLconnector;
@@ -23,6 +18,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -34,13 +30,16 @@ import net.dv8tion.jda.api.managers.ChannelManager;
 public class TicketMatchup extends ListenerAdapter {
 	/**
 	 * Handles the reaction emotes received from the queuing system.
+	 * This is where users can choose to join anonymously or as themselves.
 	 */
+	@Override
 	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
 		
 		//Prevents self from triggering this listener.
 		if (event.getUserId().equals(Bot.jda.getSelfUser().getId())) return;
 		
 		//Prevents listener from being triggered by other messages.
+		//Gets the saved message ID and compares it to the current one.
 		else if (event.getMessageId().equals(SQLconnector.get("select * from botsettings where name = 'matchup_message_id'", "value", false))) {
 			
 			String codename = null;
@@ -50,26 +49,93 @@ public class TicketMatchup extends ListenerAdapter {
 			String partnerId = null;
 			Member[] matchPair = {null, null};
 			String emoteCodePoint = null;
-			String randStr5 = randomString(5).toLowerCase();
+			String randStr5 = P.randomString(5, true).toLowerCase();
 			try {emoteCodePoint = event.getReactionEmote().getAsCodepoints();}
 			catch (IllegalStateException e) {emoteCodePoint = "" + event.getReactionEmote().getAsReactionCode() + "";}
 			boolean isAnon = true;
 			
 			//Non-anonymous
+			//TODO Right now, the non-anonymous option only changes what name is displayed.
 			if (emoteCodePoint.equals("U+2755")) {
 				isAnon = false;
-				event.retrieveMessage().complete().removeReaction(emoteCodePoint, user).queue();
 				codename = event.getUser().getAsTag();
-	
+				String appendix = "\n\n***There is 1 person ready to chat!***";
+				List<Message> inviteChannelMsgs = event.getChannel().getHistory().retrievePast(100).complete();
+				event.retrieveMessage().complete().removeReaction(emoteCodePoint, user).queue();
+				
+				//This FOR loop looks for the queue reception message then adds the appendix whenever someone joins the queue.
+				skip:
+				for (Message m : inviteChannelMsgs) {
+					if (!m.getId().equals(event.getMessageId())) continue;
+					
+					//Gets all embeds attached.
+					List<MessageEmbed> embedList = m.getEmbeds();
+					for (MessageEmbed e : embedList) {
+						//TODO FIX NullPointerException
+						if (!e.getDescription().contains(appendix)) break skip;
+						
+						//Creates a new embed containing the same contents but with a modified description.
+						EmbedBuilder embedBuilder = new EmbedBuilder();
+						embedBuilder.setAuthor(e.getAuthor().getName());
+						embedBuilder.setColor(e.getColor());
+						embedBuilder.setDescription(e.getDescription().replace(appendix, ""));
+						embedBuilder.setFooter(e.getFooter().getText());
+						embedBuilder.setTitle(e.getTitle());
+						
+						//Edits the message then closes the script.
+						m.editMessage(embedBuilder.build()).queue();
+						break skip;
+					}
+					
+					//Edits the message then closes the script.
+					//This will only trigger if the list contains no embeds.
+					String content = m.getContentRaw();
+					if (content.contains(appendix)) m.editMessage(content.replace(appendix, "")).queue();
+					break;
+				}
+				
 				//Checks if the member is already queued.
 				if (SQLconnector.get("select * from matchlist where id = '" + senderId + "'", "id", false) != null) return;
 			}
 			
 			//Anonymous
+			//TODO Combine with Non-anonymous to eliminate repeating code.
 			else if (emoteCodePoint.equals("U+2754")) {
 				isAnon = true;
+				codename = P.randomName();
+				String appendix = "\n\n***There is 1 person ready to chat!***";
+				List<Message> inviteChannelMsgs = event.getChannel().getHistory().retrievePast(100).complete();
 				event.retrieveMessage().complete().removeReaction(emoteCodePoint, user).queue();
-				codename = randomName();
+				//Finds the source message.
+				skip:
+					for (Message m : inviteChannelMsgs) {
+						if (!m.getId().equals(event.getMessageId())) continue;
+						
+						//Gets all embeds attached.
+						List<MessageEmbed> embedList = m.getEmbeds();
+						for (MessageEmbed e : embedList) {
+							//TODO FIX NullPointerException
+							if (!e.getDescription().contains(appendix)) break skip;
+							
+							//Creates a new embed containing the same contents but with a modified description.
+							EmbedBuilder embedBuilder = new EmbedBuilder();
+							embedBuilder.setAuthor(e.getAuthor().getName());
+							embedBuilder.setColor(e.getColor());
+							embedBuilder.setDescription(e.getDescription().replace(appendix, ""));
+							embedBuilder.setFooter(e.getFooter().getText());
+							embedBuilder.setTitle(e.getTitle());
+							
+							//Edits the message the closes the script.
+							m.editMessage(embedBuilder.build()).queue();
+							break skip;
+						}
+						
+						//Edits the message then closes the script.
+						//This will only trigger if the list contains no embeds.
+						String content = m.getContentRaw();
+						if (content.contains(appendix)) m.editMessage(content.replace(appendix, "")).queue();
+						break;
+					}
 	
 				//Checks if the member is already queued.
 				if (SQLconnector.get("select * from matchlist where id = '" + senderId + "'", "id", false) != null) return;
@@ -204,11 +270,12 @@ public class TicketMatchup extends ListenerAdapter {
 		
 		else {
 			List<Message> messages = event.getChannel().getHistoryFromBeginning(100).complete().getRetrievedHistory();
+			
+			//TODO Something's broken here
 			for (Message m : messages) {
 				for (MessageEmbed e : m.getEmbeds()) {
 					if (e.getTitle().equals("Stuff and things you need to know!")) {
 						String emoteCodePoint = event.getReactionEmote().getAsCodepoints();
-						P.print(emoteCodePoint);
 						if (emoteCodePoint.equals("U+1f6d1")) {
 							P.print("[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
 							P.send(event, "Closing ticket...");
@@ -232,20 +299,41 @@ public class TicketMatchup extends ListenerAdapter {
 		String[] messageSplit = message.getContentRaw().split("\\s+");
 		List<Attachment> attachments = message.getAttachments();
 		
+		//[END]
 		if (messageSplit[0].equals(Bot.prefix + "end") && senderChannel.getName().startsWith("match")) {
 			P.print("\n[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
 			P.send(event, "Closing ticket...");
 			endMatch(event);	
 			return;
 		}
+		
+		//[DELETE]
 		else if (messageSplit[0].equals(Bot.prefix + "delete")) {
 			P.print("\n[TicketMatchup] Delete archive request by: " + event.getMember().getUser().getAsTag());
-			//if () {TODO Put admin check here.}
+			
+			//Checks if the sender has an admin role.
+			boolean isAdmin = false;
+			Pattern pattern = Pattern.compile("Admin", Pattern.CASE_INSENSITIVE);
+			for (Role r : event.getMember().getRoles()) {
+				String roleName = r.getName();
+				if (pattern.matcher(roleName).find()) {
+					isAdmin = true;
+					break;
+				}
+			}
+			
+			//Cancels if isAdmin remains false.
+			if (isAdmin == false) {
+				P.send(event, "You don't have permissions to do that!");
+				P.print("Insufficient permissions.");
+				return;
+			}
 			
 			//Cancels if the ticket is not yet archived.
 			if (senderChannelName.startsWith("match")) {
 				P.print("Ticket is not yet archived. Cancelling...");
 				P.send(event, "Enter `" + Bot.prefix + "end` first to close the ticket before deleting!");
+				return;
 			}
 			
 			//Deletes the channels successfully.
@@ -324,12 +412,12 @@ public class TicketMatchup extends ListenerAdapter {
 	}
 
 	/**
-	 * Creates a new ticket.
-	 * This 
-	 * @param matchPair
-	 * @param codenames
-	 * @param isAnon
-	 * @param randomString
+	 * Creates a new matchup.
+	 * 
+	 * @param matchPair - 2 Member objects in an array. These are the members to be paired in matchups.
+	 * @param codenames - 2 String objects in an array. These are the names members will be revealed as.
+	 * @param isAnon - A boolean for anonymous matchup. 2 separate channels if true, 1 regular channel is false. [TODO FALSE not yet implemented]
+	 * @param randomString - A randomly generated code to use in channel names. This will also serve as a unique identifier in database.
 	 * @param event
 	 */
 	private void newMatch(Member[] matchPair, String[] codenames, boolean isAnon, String randomString, GenericGuildMessageEvent event) {
@@ -373,6 +461,7 @@ public class TicketMatchup extends ListenerAdapter {
 					+ "*Use this if you only want to end the conversation.*";
 			String footer = "Made with ❤ by DefinitelyRus.";
 			EmbedBuilder embedBuilder = new EmbedBuilder();
+			embedBuilder.setColor(0xD82D42);
 			embedBuilder.setTitle(title);
 			embedBuilder.setDescription(desc);
 			embedBuilder.setFooter(footer);
@@ -421,39 +510,48 @@ public class TicketMatchup extends ListenerAdapter {
 	 * @param event The source event from which the changes will be made.
 	 */
 	private void endMatch(GenericGuildMessageEvent event) {
-		//Initialization
 		P.print("|Initializing...");
-		for (TextChannel otherChannel : event.getGuild().getTextChannels()) {
-			TextChannel senderChannel = event.getChannel();
-			String name = otherChannel.getName();
-			String suffix = senderChannel.getName().replace("match1-", "").replace("match2-", "");
-			if (name.endsWith(suffix) && !name.equals(senderChannel.getName())) {
-				Category archive = event.getGuild().getCategoryById(
+		for (TextChannel channel2 : event.getGuild().getTextChannels()) {
+			TextChannel channel1 = event.getChannel();
+			String name = channel2.getName();
+			String matchCode = channel1.getName().replace("match1-", "").replace("match2-", "");
+			
+			/*
+			 * This loops attempts to look for channel2 by checking if the current channel name
+			 * contains the same match code but not the exact same name as channel1.
+			 * 
+			 * channel1 is the origin channel that triggered this command.
+			 * channel2 is the corresponding channel.
+			 */
+			if (name.endsWith(matchCode) && !name.equals(channel1.getName())) {
+				Category archiveCategory = event.getGuild().getCategoryById(
 						SQLconnector.get("select value from botsettings where name = 'matchup_archive_cat_id'", "value", false));
-				ChannelManager c1Manager = senderChannel.getManager();
-				ChannelManager c2Manager = otherChannel.getManager();
+				ChannelManager c1Manager = channel1.getManager();
+				ChannelManager c2Manager = channel2.getManager();
 				List<Permission> perms = new LinkedList<Permission>();
 				perms.add(Permission.VIEW_CHANNEL); perms.add(Permission.MESSAGE_ADD_REACTION);
 				perms.add(Permission.MESSAGE_ATTACH_FILES); perms.add(Permission.MESSAGE_EXT_EMOJI);
 				perms.add(Permission.MESSAGE_HISTORY); perms.add(Permission.MESSAGE_READ);
 				perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
-				List<String> memberIdList = (SQLconnector.getList("select * from matchlist where matchcode = '" + suffix + "'", "id", false));
+				List<String> memberIdList = (SQLconnector.getList("select * from matchlist where matchcode = '" + matchCode + "'", "id", false));
 				
 				//Changes name to closed1-xxxxx and closed2-xxxxx.
-				P.print("|Archiving " + senderChannel.getName() + "...");
-				c1Manager.setName(senderChannel.getName().replace("match", "closed"))
-				.setParent(archive)
+				P.print("|Archiving " + channel1.getName() + "...");
+				c1Manager.setName(channel1.getName().replace("match", "closed"))
+				.setParent(archiveCategory)
 				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(2)), null, perms)
 				.queue();
+				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(2)).getUser().getAsTag() + "...");
 
-				P.print("|Archiving " + otherChannel.getName() + "...");
+				P.print("|Archiving " + channel2.getName() + "...");
 				c2Manager.setName(name.replace("match", "closed"))
-				.setParent(archive)
+				.setParent(archiveCategory)
 				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(1)), null, perms)
 				.queue();
+				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(1)).getUser().getAsTag() + "...");
 				
 				P.print("|Deleting leftover records from database...");
-				SQLconnector.update("delete from matchlist where matchcode = '" + suffix + "'", false);
+				SQLconnector.update("delete from matchlist where matchcode = '" + matchCode + "'", false);
 				
 				P.printsend(event, "Ticket has been archived!");
 				return;
@@ -463,45 +561,7 @@ public class TicketMatchup extends ListenerAdapter {
 		return;
 	}
 	
-	//TODO Move this to P.java
-	//Random name generator. I know it's not the best way to do it but we don't need that many names.
-	public static String randomName() {
-		String name = null;
-		
-		//TODO Add this to another .java file.
-		List<String> names = new LinkedList<String>();
-		names.add("Falcon"); names.add("Chief"); names.add("Flower"); names.add("Northern Light"); names.add("Iceberg"); names.add("Amber");
-		names.add("Eagle"); names.add("Fox"); names.add("Macro"); names.add("Niner"); names.add("Savanna"); names.add("Astley"); names.add("Locke");
-		names.add("Opera"); names.add("Nickel"); names.add("Coiler"); names.add("Mongus"); names.add("Pinkel"); names.add("Copper");
-		
-		int i = 0;
-		try {i = RandomUtils.nextInt(0, names.size()-1);}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return names.get(0);}
-		
-		//Assign a random name. Recurse if it returns null.
-		name = names.get(i);
-		if (name == null) name = randomName();
-		return name;
-	}
-	
-	//TODO Move this to P.java
-	public static String randomString(int length) {
-		if (length < 1) return "";
-		
-		String string = "";
-		final char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-				'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
-		
-		for (int i = 0; i < length; i++) {
-			char randomChar = chars[RandomUtils.nextInt(0, chars.length-1)];
-			string = string + randomChar;
-		}
-		
-		return string;
-	}
-	
-	//TODO Move to P.java
+	@Deprecated
 	public static void sendEmbed(GenericGuildMessageEvent event,
 			@Nullable String author, @Nullable String authorUrl, @Nullable String authorIconUrl,
 			@Nullable Color color, @Nullable String description, @Nullable TemporalAccessor timestamp,
