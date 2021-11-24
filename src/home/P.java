@@ -3,10 +3,6 @@ package home;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
-
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -72,15 +68,7 @@ public class P {
 		}
 	}
 	
-	//-------------------------PRINT & SEND [PROPRIETARY]-------------------------
-	/**
-	 * Prints a specified string to the console and sends to Discord in one method call.
-	 * @param event
-	 * @param message
-	 */
-	public static void printsend(GenericGuildMessageEvent event, String message) {
-		print(message); send(event, message);
-	}
+
 	
 	//-------------------------PRIMITIVE BOOLEAN ARRAY-------------------------
 	/**Converts a boolean list into primitive boolean array.
@@ -157,18 +145,5 @@ public class P {
 		name = names.get(i);
 		if (name == null) name = randomName();
 		return name;
-	}
-	
-	//-------------------------[PROPRIETARY] DISCORD SEND MESSAGE-------------------------
-	public static void send(GenericGuildMessageEvent event, Object message) {
-		if (message instanceof String) {
-			event.getChannel().sendMessage((String) message).queue();
-		} else if (message instanceof MessageEmbed) {
-			event.getChannel().sendMessage((MessageEmbed) message).queue();
-		}
-	}
-	//
-	public static void delete(Message message) {
-		message.delete().queue();
 	}
 }
