@@ -25,7 +25,6 @@ import sql_queries.noDB_autofix;
  * code in this module so all we have to do is call a function if we ever
  * need to get records from the database or update a table.
  * @author DefinitelyRus
- *
  */
 public class SQLconnector {
 	//Initializing variables

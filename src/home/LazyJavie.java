@@ -10,6 +10,9 @@ import commands.Quit;
 
 public class LazyJavie {
 	
+	public static boolean isReady = false;
+	public static StringBuffer pendingLog = new StringBuffer();
+	
 	public static void main(String args[]) {
 		P.print("[LazyJavie] Pre-startup sequence...");
 		P.print("|Looking for LazyJavie.db...");

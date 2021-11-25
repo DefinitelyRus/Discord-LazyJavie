@@ -42,16 +42,16 @@ public class TicketMatchup extends ListenerAdapter {
 		
 		//Prevents listener from being triggered by other messages.
 		//Gets the saved message ID and compares it to the current one.
-		else if (event.getMessageId().equals(SQLconnector.get("select * from botsettings where name = 'matchup_message_id'", "value", false))) {
-			
+		else if (event.getMessageId().equals(SQLconnector.get("select value from botsettings where name = 'matchup_message_id'", "value", false))) {
+
+			final User user = event.getUser();
+			final String senderId = event.getUserId();
+			final String userTag = event.getUser().getAsTag();
+			final String randStr5 = P.randomString(5, true).toLowerCase();
 			String codename = null;
-			User user = event.getUser();
-			String senderId = event.getUserId();
-			String userTag = event.getUser().getAsTag();
 			String partnerId = null;
 			Member[] matchPair = {null, null};
 			String emoteCodePoint = null;
-			String randStr5 = P.randomString(5, true).toLowerCase();
 			try {emoteCodePoint = event.getReactionEmote().getAsCodepoints();}
 			catch (IllegalStateException e) {emoteCodePoint = "" + event.getReactionEmote().getAsReactionCode() + "";}
 			boolean isAnon = true;
@@ -97,7 +97,7 @@ public class TicketMatchup extends ListenerAdapter {
 				}
 				
 				//Checks if the member is already queued.
-				if (SQLconnector.get("select * from matchlist where id = '" + senderId + "'", "id", false) != null) return;
+				if (SQLconnector.get("select id from matchlist where id = '" + senderId + "'", "id", false) != null) return;
 			}
 			
 			//Anonymous
@@ -140,7 +140,7 @@ public class TicketMatchup extends ListenerAdapter {
 					}
 	
 				//Checks if the member is already queued.
-				if (SQLconnector.get("select * from matchlist where id = '" + senderId + "'", "id", false) != null) return;
+				if (SQLconnector.get("select id from matchlist where id = '" + senderId + "'", "id", false) != null) return;
 			}
 			
 			//Remove from queue
@@ -194,7 +194,7 @@ public class TicketMatchup extends ListenerAdapter {
 			
 			//Gets the queue list.
 			List<String> queueIdList =
-					SQLconnector.getList("select * from matchlist where matchcode is null", "id", false);
+					SQLconnector.getList("select id from matchlist where matchcode is null", "id", false);
 			
 			P.print("\n[TicketMatchup] " + userTag + " has been added to matchup queue.");
 			
@@ -261,8 +261,8 @@ public class TicketMatchup extends ListenerAdapter {
 				//Prepares the necessary arguments for calling newMatch() function.
 				boolean isMatchAnonymous = false;
 				String[] codenames = {null, null};
-				codenames[0] = SQLconnector.get("select * from matchlist where id = '" + senderId + "'", "codename", false);
-				codenames[1] = SQLconnector.get("select * from matchlist where id = '" + partnerId + "'", "codename", false);
+				codenames[0] = SQLconnector.get("select codename from matchlist where id = '" + senderId + "'", "codename", false);
+				codenames[1] = SQLconnector.get("select codename from matchlist where id = '" + partnerId + "'", "codename", false);
 				for (String s : codenames) { if (s != null) { isMatchAnonymous = true; break; } }
 				
 				newMatch(matchPair, codenames, isMatchAnonymous, randStr5, event);
@@ -556,6 +556,7 @@ public class TicketMatchup extends ListenerAdapter {
 		return;
 	}
 	
+	//TODO REMOVE OR IMPROVE
 	@Deprecated
 	public static void sendEmbed(GenericGuildMessageEvent event,
 			@Nullable String author, @Nullable String authorUrl, @Nullable String authorIconUrl,
@@ -565,7 +566,7 @@ public class TicketMatchup extends ListenerAdapter {
 			@Nullable String title, @Nullable String titleUrl) {
 		EmbedBuilder embed = new EmbedBuilder();
 		
-		//TODO Add if null checkers.
+		//TODO Add if-null checkers.
 		embed.setAuthor(author, authorUrl, authorIconUrl);
 		embed.setColor(color);
 		embed.setDescription(description);

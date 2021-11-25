@@ -18,26 +18,30 @@ public class P {
 	private static final String expectedNullPointerError =
 			"java.lang.NullPointerException: Cannot invoke \"javax.swing.JTextArea.setText(String)\" because the return value of \"home.LazyJavieUI.getConsoleOutput()\" is null";
 	
-	//-------------------------PRINT-------------------------
+	//------------------------- PRINT -------------------------
 	/**
 	 * Similar in function to System.out.println().
 	 * @param args - A string value to be printed to the console.
 	 */
-	public static void print (String args) {
+	public static void print(String args) {
 		System.out.println(args);
 		
 		//Additional code for custom-made systems (optional).
 		consoleOut(args);
+		try {
+			//TODO Have these IDs be set via command.
+			DiscordUtil.sendLog("900289688475144202", "913282006383722527", args); //"262784778690887680", "857172011032903680"
+		} catch (Exception e) {P.print(ExceptionUtils.getStackTrace(e));}
 	}
 	
-	//-------------------------PRINTRAW-------------------------
+	//------------------------- PRINTRAW -------------------------
 	/**
 	 * Identical in function to System.out.println().
 	 * @param args - A string value to be printed to the console.
 	 */
-	public static void printraw (String args) {System.out.println(args);}
+	public static void printraw(String args) {System.out.println(args);}
  	
-	//-------------------------CONSOLE OUTPUT [PROPRIETARY]-------------------------
+	//------------------------- CONSOLE OUTPUT [PROPRIETARY] -------------------------
 	/**
 	 * Takes the current console contents, appends the string argument, then applies the changes.
 	 * @param args
@@ -70,7 +74,7 @@ public class P {
 	
 
 	
-	//-------------------------PRIMITIVE BOOLEAN ARRAY-------------------------
+	//------------------------- PRIMITIVE BOOLEAN ARRAY -------------------------
 	/**Converts a boolean list into primitive boolean array.
 	 * @param booleanList
 	 * @return A primitive boolean array form of the list.
@@ -85,7 +89,7 @@ public class P {
 	}
 	
 	//TODO Make one for every primitive data type.
-	//-------------------------PRIMITIVE STRING ARRAY-------------------------
+	//------------------------- PRIMITIVE STRING ARRAY -------------------------
 	/**Converts a string list into a primitive string array.
 	 * @param stringList
 	 * @return A primitive string array form of the list.
@@ -99,7 +103,7 @@ public class P {
 	    return primitives;
 	}
 	
-	//-------------------------RANDOM STRING-------------------------
+	//------------------------- RANDOM STRING -------------------------
 	/**A random string generator.
 	 * 
 	 * @param length - The number of random characters to be returned.
@@ -123,7 +127,7 @@ public class P {
 		else return string.toLowerCase();
 	}
 
-	//-------------------------RANDOM NAME GENERATOR-------------------------
+	//------------------------- RANDOM NAME GENERATOR -------------------------
 	/**Random name generator.
 	 * 
 	 * @return A random name selected from a pre-made list.

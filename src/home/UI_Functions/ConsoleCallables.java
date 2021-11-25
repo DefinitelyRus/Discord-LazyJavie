@@ -17,7 +17,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ConsoleCallables {
-
+	
+	//NEEDS UPDATING. Merge with LazyJavie.java to enable UI.
 	public static void startBot(JButton button, String mode, Choice list) {
 		if (mode.equals("Start Bot")) {
 			Bot.isAwake = true;

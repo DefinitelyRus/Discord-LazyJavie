@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -25,7 +27,6 @@ public class DiscordUtil {
 	 * @return TRUE if the user passes the specified checks or FALSE if not.
 	 */
 	public static boolean isUserAdmin(GuildMessageReceivedEvent event, String searchType) {
-		P.print("[DiscordUtil] Checking " + event.getMember().getUser().getAsTag() + " for admin privileges using " + searchType + " search type...");
 		Pattern pattern = Pattern.compile("Admin", Pattern.CASE_INSENSITIVE);
 		if (searchType == null) searchType = "both";
 		
@@ -60,7 +61,7 @@ public class DiscordUtil {
 		return false;
 	}
 	
-	//-------------------------PRINT & SEND [PROPRIETARY]-------------------------
+	//------------------------- PRINT & SEND -------------------------
 	/**
 	 * Prints a specified string to the console and sends to Discord in one method call.
 	 * @param event
@@ -70,7 +71,7 @@ public class DiscordUtil {
 		P.print(message); send(event, message);
 	}
 	
-	//-------------------------[PROPRIETARY] DISCORD SEND MESSAGE-------------------------
+	//------------------------- SEND MESSAGE -------------------------
 	public static void send(GenericGuildMessageEvent event, Object message) {
 		if (message instanceof String) {
 			event.getChannel().sendMessage((String) message).queue();
@@ -79,7 +80,57 @@ public class DiscordUtil {
 		}
 	}
 	
-	//-------------------------DELETE MESSAGE-------------------------
+	//------------------------- SEND TARGETTED BY CHANNEL CLASS -------------------------
+	public static void sendTo(MessageChannel target, Object message) {
+		if (message instanceof String) {
+			target.sendMessage((String) message).queue();
+		} else if (message instanceof MessageEmbed) {
+			target.sendMessage((MessageEmbed) message).queue();
+		}
+	}
+
+	//------------------------- SEND TARGETTED BY CHANNEL ID -------------------------
+	public static void sendTo(Guild guild, String target, Object message) {
+		if (message instanceof String) {
+			guild.getTextChannelById(target).sendMessage((String) message).queue();
+		} else if (message instanceof MessageEmbed) {
+			guild.getTextChannelById(target).sendMessage((MessageEmbed) message).queue();
+		}
+	}
+	
+	//------------------------- LOG TO CHANNEL -------------------------
+	public static void sendLog(String guildId, String channelId, String message) {
+		if (LazyJavie.isReady == false) {
+			LazyJavie.pendingLog.append(message + "\n");
+		}
+		else {
+			try {
+				message = LazyJavie.pendingLog + message;
+				Bot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("`" + message + "`").queue();
+				//LazyJavie.pendingLog.delete(0, LazyJavie.pendingLog.length()-1);
+				LazyJavie.pendingLog.setLength(0);
+			} catch (Exception e) {
+				LazyJavie.pendingLog.append(message);
+			}
+		}
+	}
+	
+//	public static void sendLog(String guildId, String channelId, String message) {
+//		if (LazyJavie.isReady == false) {
+//			LazyJavie.pendingLog += message + "\n";
+//		}
+//		else {
+//			try {
+//				message = LazyJavie.pendingLog + message;
+//				Bot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("`" + message + "`").queue();
+//				LazyJavie.pendingLog = "";
+//			} catch (Exception e) {
+//				LazyJavie.pendingLog += message;
+//			}
+//		}
+//	}
+	
+	//------------------------- DELETE MESSAGE -------------------------
 	public static void delete(Message message) {
 		message.delete().queue();
 	}

@@ -38,7 +38,13 @@ public class NewMemberPrompter extends ListenerAdapter{
 		Member member = event.getMember();
 		Guild guild = event.getGuild();
 		String targetChannelID = SQLconnector.get("select * from botsettings where name = 'automention_on_join_channel_id'", "value", false);
-		TextChannel channel = guild.getTextChannelById(targetChannelID);
+		TextChannel channel = null;
+		try {
+			channel = guild.getTextChannelById(targetChannelID);
+		} catch (IllegalArgumentException e) {
+			P.print(ExceptionUtils.getStackTrace(e) + "\n\nUse '$setAutoMentionChannel <@text-channel>' to set auto-mention to target channel upon joining.");
+			return;
+		}
 		
 		//Creates a message that includes instructions for everyone in case the deletion fails.
 		P.print("\n[NewMemberPrompter] New member detected. Prompting " + member.getUser().getAsTag() + "...");

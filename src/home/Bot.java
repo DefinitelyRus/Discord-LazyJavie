@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.login.LoginException;
 import javax.swing.filechooser.FileSystemView;
@@ -111,6 +112,9 @@ public class Bot {
 			jda.addEventListener(new TicketHostBuilder());
 			
 			P.print("Ready!");
+			TimeUnit.MILLISECONDS.sleep(1000);
+			LazyJavie.isReady = true;
+			DiscordUtil.sendLog("900289688475144202", "913282006383722527", "");
 			return true;
 		}
 		//[A] Case: File not found.

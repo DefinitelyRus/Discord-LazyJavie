@@ -52,10 +52,10 @@ public class LazyJavieUI extends JFrame {
 	
 	//Developer-written instantiations
 	static boolean hideUI = false;
-	private static Choice textChannelsList;
-	private static JButton sendButton;
 	public static List<TextChannel> channelsList = new ArrayList<TextChannel>();
 	public static Dictionary<String, TextChannel> channelDict = new Hashtable<String, TextChannel>();
+	private static Choice textChannelsList;
+	private static JButton sendButton;
 	private Choice tableList;
 	private static JLabel entryCounterLabel;
 	
