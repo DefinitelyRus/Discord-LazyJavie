@@ -9,7 +9,7 @@ suspicious which then allows assigned moderators to view the conversation and ta
 
 ## Commands
 Quit
-* `$quit <sdsa>`
+* `$quit`
 
 TicketMatchup
 * `$end`
