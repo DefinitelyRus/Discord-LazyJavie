@@ -107,7 +107,6 @@ public class DiscordUtil {
 			try {
 				message = LazyJavie.pendingLog + message;
 				Bot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("`" + message + "`").queue();
-				//LazyJavie.pendingLog.delete(0, LazyJavie.pendingLog.length()-1);
 				LazyJavie.pendingLog.setLength(0);
 			} catch (Exception e) {
 				LazyJavie.pendingLog.append(message);
@@ -115,6 +114,7 @@ public class DiscordUtil {
 		}
 	}
 	
+//	//Original code using regular concatenation.
 //	public static void sendLog(String guildId, String channelId, String message) {
 //		if (LazyJavie.isReady == false) {
 //			LazyJavie.pendingLog += message + "\n";

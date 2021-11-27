@@ -36,13 +36,17 @@ public class TicketEmoteListener extends ListenerAdapter {
 		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 		
 		if (msg_id1.equals(msg_id2)) {
-			P.print("\n[TicketEmoteListener] New ticket in query requested by " + "*".repeat(event.getUser().getAsTag().length()) + "...");
+			P.print("\n[TicketEmoteListener] New ticket in query requested by "
+					+ "*".repeat(event.getUser().getAsTag().length()) + "...");
 			List<TextChannel> textChannels = event.getGuild().getTextChannels();
 			List<TextChannel> ticketChannels = new LinkedList<TextChannel>();
 			int highestValue = 0;
 			
 			//Adds every ticket channel to a list.
-			for (TextChannel t : textChannels) {if (t.getName().startsWith("ticket")) ticketChannels.add(t);}
+			for (TextChannel t : textChannels) {
+				if (t.getName().startsWith("ticket"))
+					ticketChannels.add(t);
+			}
 			
 			//Adds every ticket channel's ID to Bot.activeTickets.
 			for (TextChannel ch : ticketChannels) {

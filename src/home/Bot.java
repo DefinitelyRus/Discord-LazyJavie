@@ -18,10 +18,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import commands.NewMemberPrompter;
 import commands.Quit;
 import commands.Returns;
-import commands.TicketAutoPrompter;
-import commands.TicketHostBuilder;
-import commands.TicketMatchup;
-import commands.TicketMatchupBuilder;
+import commands.ticketter.TicketAutoPrompter;
+import commands.ticketter.TicketHostBuilder;
+import commands.matchup.TicketMatchup;
+import commands.matchup.TicketMatchupBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -114,31 +114,31 @@ public class Bot {
 			P.print("Ready!");
 			TimeUnit.MILLISECONDS.sleep(1000);
 			LazyJavie.isReady = true;
-			DiscordUtil.sendLog("900289688475144202", "913282006383722527", "");
+			DiscordUtil.sendLog("900289688475144202", "913282006383722527", ""); //TODO Add as a command. See P.print().
 			return true;
 		}
 		//[A] Case: File not found.
 		catch (FileNotFoundException e) {
 			P.print("Missing file error:\n" + e.toString());
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e));
+			SQLconnector.callError(e);
 			return false;
 		}
 		//[A] Case: File empty.
 		catch (NoSuchElementException e) {
 			P.print("Empty file error:\n" + e.toString());
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e));
+			SQLconnector.callError(e);
 			return false;
 		}
 		//[B] Case: Bot likely not initialized
 		catch (NullPointerException e) {
 			P.print(e.toString() + " - Likely caused by a bad or no connection or an invalid token.");
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e));
+			SQLconnector.callError(e);
 			return false;
 		}
 		//[A-B] Case: Every other exception.
 		catch (Exception e) {
 			P.print(ExceptionUtils.getStackTrace(e));
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e));
+			SQLconnector.callError(e);
 			return false;
 		}
 	}

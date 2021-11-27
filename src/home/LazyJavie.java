@@ -38,7 +38,7 @@ public class LazyJavie {
 		}
 		
 		//Attempts to get a replacement token saved from database.
-		tokenOverride = SQLconnector.get("select * from botsettings where name = 'discord_bot_token_override'", "value", false);
+		tokenOverride = SQLconnector.get("select value from botsettings where name = 'discord_bot_token_override'", "value", false);
 		
 		//Prompts the bot for startup with the assigned token.
 		P.print("|Attempting to start LazyJavie...");

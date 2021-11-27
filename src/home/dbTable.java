@@ -30,8 +30,8 @@ public class dbTable {
 		//Initialization
 		boolean gotMembers = false;
 		String table = tableList.getSelectedItem();
-		if (table.equals("- Select table -")) {LazyJavieUI.getEntryCounterLabel().setText("No table selected."); return;} //Checks if there are no items selected.
-		else if (table.equals("members")) gotMembers = getMembers();
+		if (table.equals("- Select table -")) {LazyJavieUI.getEntryCounterLabel().setText("No table selected."); return;}
+		else if (table.equals("members")) gotMembers = getMembers(); //Checks if there are no items selected.
 		int xCount = 0, yCount = 0;
 		int xy[] = SQLconnector.getXY(table);
 		xCount = xy[0];
@@ -69,7 +69,7 @@ public class dbTable {
 			return;
 			
 		} catch (SQLException e) {
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());
+			SQLconnector.callError(e); P.print(e.toString());
 			return;
 		}
 	}
@@ -89,7 +89,8 @@ public class dbTable {
 		SQLconnector.dbPass = SQLconnector.getPass();
 		
 		try {
-			Connection connection = DriverManager.getConnection(SQLconnector.DB_ADDRESS, SQLconnector.DB_LOGIN_ID, SQLconnector.getPass());
+			Connection connection = DriverManager.getConnection(
+				SQLconnector.DB_ADDRESS, SQLconnector.DB_LOGIN_ID, SQLconnector.getPass());
 			Statement statement = connection.createStatement();
 			
 			//Gets the number of columns.
@@ -112,7 +113,7 @@ public class dbTable {
 			
 			connection.close();	
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 
 		//Converts tg_2d into an object array then assigns it to a variable.
 		Object[][] tableGridContents = tg_2d.toArray(new Object[0][0]);
@@ -138,13 +139,14 @@ public class dbTable {
 	 */
 	public static void updateTableList(Choice tableList) {
 		try {
-			ResultSet tableResultSet = SQLconnector.getResultSet("SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';");
+			ResultSet tableResultSet = SQLconnector.getResultSet(
+				"SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';");
 			tableList.removeAll();
 			tableList.add("- Select table -");
 			while (tableResultSet.next()) {tableList.add(tableResultSet.getString("name"));}
 			SQLconnector.con.close();
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
 	
 	//-------------------------GET COLUMN HEADERS FROM DATABASE-------------------------
@@ -160,7 +162,7 @@ public class dbTable {
 		List<String> headersList = new LinkedList<String>();
 		for (int i = 1; i <= columnCount; i++) {
 			try {headersList.add(results.getMetaData().getColumnName(i));}
-			catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 		}
 		String[] columnHeaders = P.toStringArray(headersList);
 		return columnHeaders;
@@ -220,7 +222,7 @@ public class dbTable {
 				String str;
 				if (memberCount == 1) str = " entry found."; else str = " entries found.";
 				str = memberCount + str;
-				SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print("Unknown error caught: " + e.toString());
+				SQLconnector.callError(e); P.print("Unknown error caught: " + e.toString());
 				LazyJavieUI.getEntryCounterLabel().setText("Error encountered; showing offline database. " + str);
 			}
 		} return true;

@@ -131,7 +131,7 @@ public class Returns extends ListenerAdapter{
 				P.print("|Missing arguments.");
 				event.getChannel().sendMessage("Format: `" + Bot.prefix + "hiddenping <@user> <#text-channel>`. If you're sure you formatted this correctly, check console for an error code.").queue();
 				P.print(ExceptionUtils.getStackTrace(e));
-				SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e));
+				SQLconnector.callError(e);
 				return;
 			}
 			
@@ -139,7 +139,7 @@ public class Returns extends ListenerAdapter{
 			channel.sendMessage("Pssst! " + member.getAsMention()).queue();
 			
 			P.print("|Waiting for local cache to refresh...");
-			try {TimeUnit.MILLISECONDS.sleep(400);} catch (InterruptedException e) {e.printStackTrace();}
+			try {TimeUnit.MILLISECONDS.sleep(400);} catch (InterruptedException e) {SQLconnector.callError(e); e.printStackTrace();}
 			
 			P.print("|Deleting message...");
 			List<Message> msgs = channel.getHistory().retrievePast(1).complete();

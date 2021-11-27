@@ -59,7 +59,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 		 * 1 second may not be enough in case of sudden connection issues so
 		 * the above-mentioned issue may still occur.
 		 */
-		try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		//Gets the most recent message (a list containing 1 item) then deletes it.
 		List<Message> msg = channel.getHistory().retrievePast(1).complete();
@@ -90,7 +90,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 				DiscordUtil.send(event, "Missing argument. Mention the channel you want to set or enter its ID.");
 				return;
 			}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return;}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return;}
 			
 			//Removes the symbols included in the formatting when mentioning text channels.
 			P.print("|Filtering user input...");
@@ -125,7 +125,7 @@ public class NewMemberPrompter extends ListenerAdapter{
 			
 			//Same caching issue.
 			P.print("|Waiting for cache to refresh...");
-			try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			P.print("|Getting message history...");
 			List<Message> msg = guild.getTextChannelById(channelId).getHistory().retrievePast(1).complete();

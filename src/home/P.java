@@ -16,7 +16,7 @@ public class P {
 	private static String currentConsoleContents = "";
 	
 	private static final String expectedNullPointerError =
-			"java.lang.NullPointerException: Cannot invoke \"javax.swing.JTextArea.setText(String)\" because the return value of \"home.LazyJavieUI.getConsoleOutput()\" is null";
+			"java.lang.NullPointerException: Cannot invoke \"javax.swing.JTextArea.setText(String)\"";
 	
 	//------------------------- PRINT -------------------------
 	/**
@@ -137,13 +137,23 @@ public class P {
 		
 		//TODO Make use of SQLite to allow for additional and/or custom lists.
 		List<String> names = new LinkedList<String>();
-		names.add("Falcon"); names.add("Chief"); names.add("Flower"); names.add("Northern Light"); names.add("Iceberg"); names.add("Amber");
-		names.add("Eagle"); names.add("Fox"); names.add("Macro"); names.add("Niner"); names.add("Savanna"); names.add("Astley"); names.add("Locke");
-		names.add("Opera"); names.add("Nickel"); names.add("Coiler"); names.add("Mongus"); names.add("Pinkel"); names.add("Copper");
+		names.add("Falcon"); names.add("Chief"); names.add("Flower"); names.add("Northern Light");
+		names.add("Iceberg"); names.add("Amber"); names.add("Eagle"); names.add("Fox"); names.add("Macro");
+		names.add("Niner"); names.add("Savanna"); names.add("Astley"); names.add("Locke"); names.add("Opera");
+		names.add("Nickel"); names.add("Coiler"); names.add("Mongus"); names.add("Pinkel"); names.add("Copper");
 		
+		//Attempts to get additional names from database.
+		try {
+			List<String> moreNames =
+				SQLconnector.getList("select name from customNames", "name", false);
+			names.addAll(moreNames);
+		} catch (Exception e) { //TODO Replace this exception class with something more specific.
+			P.print("[P] Random name custom list not found. Skipping...");
+		}
+
 		int i = 0;
 		try {i = RandomUtils.nextInt(0, names.size()-1);}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return names.get(0);}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return names.get(0);}
 		
 		//Assign a random name. Recurse if it returns null.
 		name = names.get(i);

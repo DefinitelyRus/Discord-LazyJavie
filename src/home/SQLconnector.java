@@ -36,7 +36,6 @@ public class SQLconnector {
 	static String dbPass = "password"; //Placeholder. I'm not that dumb.
 	static String ps_dir = USER_DOCS_FOLDER_PATH + "\\lazyjavie_token.txt";
 	
-
 	private static Connection conn = null;
 	public static Connection getConn() throws SQLException {
 	    if (conn == null) {
@@ -80,8 +79,8 @@ public class SQLconnector {
 			
 			if (tp == true) {P.print("|[SQLcA-4] Done!");}
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
 	
 	//-------------------------GET VALUE-------------------------
@@ -121,9 +120,9 @@ public class SQLconnector {
 			
 			return returnMsg;
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return "Error encountered: " + e;}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return "Error encountered: " + e;}
 		catch (Exception e) {
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());
+			SQLconnector.callError(e); P.print(e.toString());
 			return "Error encountered: " + e;
 		}
 	}
@@ -166,9 +165,9 @@ public class SQLconnector {
 			
 			return returnList;
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return returnList;}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return returnList;}
 		catch (Exception e) {
-			SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());
+			SQLconnector.callError(e); P.print(e.toString());
 			return returnList;
 		}
 	}
@@ -197,7 +196,7 @@ public class SQLconnector {
 			}
 			P.print("|[SQLcD-4] New database created.\n");
 		}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
 	
 	//-------------------------UPDATE EXTERNAL-------------------------
@@ -228,23 +227,26 @@ public class SQLconnector {
 			//Closes the connection to the database.
 			connection.close();
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
 	
 	//-------------------------CALL ERROR-------------------------
 	/**<p>Saves the error message to the database for later debugging. Note that this is saved along with the discord bot's settings and saved data.
 	 * <br><br>Usage:
-	 * <br>catch (Exception e) callError(e.toString(), ExceptionUtils.getStackTrace(e));
+	 * <br>catch (Exception e) callError(Except, ExceptionUtils.getStackTrace(e));
 	 * <br><br>Shortcut with print:
-	 * <br>SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());</p>
+	 * <br>SQLconnector.callError(e); P.print(e.toString());</p>
 	 * 
-	 * @param message Exception.toString() - The error code and a short description.
-	 * @param error ExceptionUtils.getStackTrace(e)) - The error code, description, and stack tracing.
+	 * @param exception - The throwable exception that needs to be saved in database.
 	 */
-	public static void callError(String message, String error) {
-		P.print("\nError Received: \n" + error);
-		String exeScript = "insert into errorlog (err_type, err_stacktrace, eventdate, appver) values ('" +message+ "', '" +error+ "', datetime(), '" +Bot.VERSION+ "');";
+	public static void callError(Throwable exception) {
+
+		String errorLabel = ExceptionUtils.getRootCause(exception);
+		String stackTrace = ExceptionUtils.getStackTrace(exception);
+
+		P.print("\nError Received: \n" + stackTrace);
+		String exeScript = "insert into errorlog (err_type, err_stacktrace, eventdate, appver) values ('" + errorLabel + "', '" + stackTrace + "', datetime(), '" +Bot.VERSION+ "');";
 		dbPass = getPass();
 		
 		try {
@@ -252,8 +254,8 @@ public class SQLconnector {
 			Statement statement = connection.createStatement();
 			statement.execute(exeScript);
 		}
-		catch (SQLException e) {P.print("callError() failed. Please send the error code to the developer.");}
-		catch (Exception e) {P.print("callError() failed. Please send the error code to the developer.");}
+		catch (SQLException e) {P.print("[SQLconnector] callError() failed. Please send the error code to the developer.");}
+		catch (Exception e) {P.print("[SQLconnector] callError() failed. Please send the error code to the developer.");}
 	}
 	
 	//-------------------------GET ROW & COLUMN SIZE-------------------------
@@ -281,7 +283,7 @@ public class SQLconnector {
 			results = statement.executeQuery(getY);
 			y = results.getMetaData().getColumnCount();
 			
-		} catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		} catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 		int[] XY = {x, y};
 		return XY;
 	}
@@ -313,11 +315,12 @@ public class SQLconnector {
 			
 			//Looks for the password on the second line of the text file.
 			int i = 0; //index
-		    while (reader.hasNextLine() && i >= 1) {dbpass = reader.nextLine(); i++;}
+		    while (reader.hasNextLine() && i >= 1)
+				{dbpass = reader.nextLine(); i++;}
 		    
 		    reader.close();
 		    return dbpass;
-		    }
+		}
 		
 		catch (FileNotFoundException e) {
 			P.print("[SQLconnector] lazyjavie_token.txt is missing from target directory.");
@@ -340,13 +343,13 @@ public class SQLconnector {
 			} catch (Exception e2) {}
 			
 			return dbpass;
-			}
+		}
 		
 		catch (Exception e) {
 			P.print(ExceptionUtils.getStackTrace(e));
 			String dbpass = "";
 			return dbpass;
-			}
+		}
 	}
 	
 	//-------------------------DATABASE EXISTENCE CHECK-------------------------
@@ -371,6 +374,7 @@ public class SQLconnector {
 			
 			//Pre-drops potentially already-existing table. This happens when write test fails.
 			//The table is created during write test but is dropped after read test because the read test uses the table.
+			//TODO Inspect - What does this do? Is this necessary?
 			try {statement.execute(query3);}
 			catch (SQLException e2) {}
 
@@ -391,12 +395,11 @@ public class SQLconnector {
 			//Closes the connection then returns the result.
 			return true;
 		}
-		catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return false;}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return false;}
+		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return false;}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return false;}
 		finally {
 			try {getConn().close();}
-			catch (SQLException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());
-			}
+			catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 		}
 	}
 	
