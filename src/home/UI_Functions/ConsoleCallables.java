@@ -41,7 +41,7 @@ public class ConsoleCallables {
 			
 			//Waits until the bot is ready. (Otherwise, the code will continue but the cache isn't yet ready, causing errors.)
 			try {Bot.jda.awaitReady();}
-			catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			button.setEnabled(true);
 			
@@ -78,7 +78,7 @@ public class ConsoleCallables {
 			
 			//Look for an alternative way to delay changing the text
 			//try {Bot.jda.awaitStatus(Status.SHUTDOWN);}
-			//catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			//catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 			button.setText("Start Bot");
 			LazyJavieUI.getConsoleInput().setEnabled(false);
 			LazyJavieUI.getSendButton().setEnabled(false);;
@@ -108,7 +108,7 @@ public class ConsoleCallables {
 				ConsoleCmd.call(input.getText());
 			}
 		}
-		catch (NullPointerException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print("NullPointerException: Text channel likely not found.");}
+		catch (NullPointerException e) {SQLconnector.callError(e); P.print("NullPointerException: Text channel likely not found.");}
 		//Sends as commands
 		//else {MessageReceivedEvent.call(inputMsg);}
 	}

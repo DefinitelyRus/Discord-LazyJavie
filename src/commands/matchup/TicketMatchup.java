@@ -438,7 +438,7 @@ public class TicketMatchup extends ListenerAdapter {
 			perms.add(Permission.MESSAGE_ATTACH_FILES); perms.add(Permission.MESSAGE_EXT_EMOJI);
 			perms.add(Permission.MESSAGE_HISTORY); perms.add(Permission.MESSAGE_READ);
 			perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
-		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); DiscordUtil.printsend(event, e.toString()); return;}
+		} catch (Exception e) {SQLconnector.callError(e); DiscordUtil.printsend(event, e.toString()); return;}
 		
 		//Creates two channels, gives each member permissions to chat in each one.
 		if (isAnon == true) {
@@ -463,7 +463,7 @@ public class TicketMatchup extends ListenerAdapter {
 			MessageEmbed embed = embedBuilder.build();
 			
 			//Delays 1 second for cache to refresh.
-			try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			int index = 0;
 			List<TextChannel> textChannels = event.getGuild().getTextChannels();
@@ -476,7 +476,7 @@ public class TicketMatchup extends ListenerAdapter {
 				t.sendMessage(embed).queue();
 				
 				//Delays 1 second for cache to refresh.
-				try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 				
 				//Loops through the first 10 messages sent in a channel then
 				//adds the necessary reaction emotes for exiting or reporting.
@@ -491,7 +491,7 @@ public class TicketMatchup extends ListenerAdapter {
 				//Sends another message telling the user their alias that the other side can see.
 				try {t.sendMessage(matchPair[index].getAsMention() + ", *you are talking to **"
 				+ codenames[(index-1)*(index-1)] + "** and you will be known as **" + codenames[index] + "**.*").queue();}
-				catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 				index++;
 			}
 		}

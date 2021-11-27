@@ -52,7 +52,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 				event.getChannel().sendMessage("Missing header and/or body. Use `<b>` to separate them.").queue();
 				return;
 				}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return;}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return;}
 
 			//Sets the footer. (Optional)
 			try {
@@ -60,7 +60,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 				embed.setFooter(footer);
 			}
 			catch (ArrayIndexOutOfBoundsException e) {P.print("|Optional footer missing; skipping...");}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			//Finalizes the embed.
 			Bot.ticketEmbed = embed.build();
@@ -87,31 +87,31 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 
 			try {role_id = args[1].toLowerCase();}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Moderator role tag/id argument missing. Cancelling..."); sendFail(event); return;}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			try {channelName = args[2].toLowerCase();}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Channel name argument missing. Cancelling..."); sendFail(event); return;}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 
 			try {categoryName = args[3].toLowerCase();}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Category name argument missing. Cancelling..."); sendFail(event); return;}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 
 			try {archiveName = args[4];}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional archive category not specified. Setting to default..."); archiveName = categoryName;}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			try {emote1 = args[5];}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 1 not specified. Setting to default...");}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 
 			try {emote2 = args[6];}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 2 not specified. Setting to default...");}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			try {emote3 = args[7];}
 			catch (ArrayIndexOutOfBoundsException e) {DiscordUtil.printsend(event, "Optional custom emote 3 not specified. Setting to default...");}
-			catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			//Filters the inputs.
 			role_id = role_id.replace("<@&", "").replace(">", "");
@@ -170,7 +170,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 				
 				//1 second delay for cache refresh.
 				P.print("|Prompt sent. Adding emote...");
-				try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 				
 				//SEND MESSAGE
 				//Gets the most recent message sent from the target channel.

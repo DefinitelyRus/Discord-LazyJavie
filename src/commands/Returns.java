@@ -41,12 +41,10 @@ public class Returns extends ListenerAdapter{
 		if (!event.getMessage().getContentRaw().startsWith(Bot.prefix)) return;
 		
 		//Initialization
-		String[] args = event.getMessage().getContentRaw().split("\\s+");
-		String argsFull = event.getMessage().getContentRaw();
-		String requestby = null;
-		boolean isAdmin = DiscordUtil.isUserAdmin(event, "any");
-		
-		if (args[0].startsWith(Bot.prefix)) {requestby = event.getMember().getUser().getAsTag();}
+		final String[] args = event.getMessage().getContentRaw().split("\\s+");
+		final String argsFull = event.getMessage().getContentRaw();
+		final String requestby = event.getMember().getUser().getAsTag();;
+		final boolean isAdmin = DiscordUtil.isUserAdmin(event, "any");
 		
 		//[BOT TOKEN] Returns the bot's token... not really.----------------------------------------------------
 		if (args[0].equalsIgnoreCase(Bot.prefix + "bottoken")) {

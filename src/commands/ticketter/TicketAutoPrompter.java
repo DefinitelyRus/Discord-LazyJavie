@@ -52,7 +52,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 			P.print("Detected new ticket!");
 			channel.sendMessage(msgEmbed).queue();
 			
-			try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			List<Message> msgs = Bot.jda.getTextChannelById(channel.getId()).getHistory().retrievePast(1).complete();
 			Message promptMsg = null;
@@ -79,7 +79,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//Others
 					m.addReaction(utf5).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 				
 				//Assigns the current message to a variable for later reference.
 				promptMsg = m;
@@ -326,7 +326,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(500);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(500);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -351,7 +351,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-4] otherBadConn
 					m.addReaction(utf4).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -378,7 +378,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1-1>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -399,7 +399,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-1-3] otherCantJoin
 					m.addReaction(utf3).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -420,7 +420,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1-1-1>");
 		DiscordUtil.send(event, embed.build());
 
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -433,7 +433,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-1-1 Done]
 					m.addReaction(utfCheck).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -453,7 +453,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1-2>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -474,7 +474,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-2-3] otherError
 					m.addReaction(utf3).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -502,7 +502,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1-1>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -527,7 +527,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-3-4] otherLinkFail
 					m.addReaction(utf4).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -549,7 +549,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@2>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -574,7 +574,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@2-3] otherLost
 					m.addReaction(utf4).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 	}
@@ -596,7 +596,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@3>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -621,7 +621,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@3-4] otherGrief
 					m.addReaction(utf4).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 		
@@ -645,7 +645,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 		embed.setAuthor("TetrabearMC <@1-1>");
 		DiscordUtil.send(event, embed.build());
 		
-		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		try {TimeUnit.MILLISECONDS.sleep(400);} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		List<Message> history = event.getChannel().getHistory().retrievePast(100).complete();
 		
@@ -674,7 +674,7 @@ public class TicketAutoPrompter extends ListenerAdapter {
 					//[@1-4] otherBadConn
 					m.addReaction(utf5).queue();
 					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 			}
 		}
 				

@@ -67,7 +67,7 @@ public class P {
 		try {LazyJavieUI.getConsoleOutput().setText(newString);}
 		catch (Exception e) {
 			try {
-				if (!e.toString().equals(expectedNullPointerError)) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); printraw(e.toString());}
+				if (!e.toString().equals(expectedNullPointerError)) {SQLconnector.callError(e); printraw(e.toString());}
 			} catch (Exception e1) {SQLconnector.callError(e1.toString(), ExceptionUtils.getStackTrace(e1)); P.printraw(e1.toString());}
 		}
 	}

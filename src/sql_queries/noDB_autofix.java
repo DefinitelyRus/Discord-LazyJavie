@@ -7,7 +7,6 @@ package sql_queries;
 public class noDB_autofix {
 	public static String[] get(String mode) {
 		
-		
 		//TODO Update newDB.
 		final String[] sqlite = {
 		"drop table members;",

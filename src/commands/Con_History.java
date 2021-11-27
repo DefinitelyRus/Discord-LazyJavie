@@ -28,7 +28,7 @@ public class Con_History {
 			}
 		}
 		catch (ArrayIndexOutOfBoundsException e) {P.print("No amount specified: " + Bot.prefix + "history <no. of messages>");}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
 }
 

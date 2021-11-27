@@ -33,7 +33,7 @@ public class TicketEmoteListener extends ListenerAdapter {
 			msg_id2 = SQLconnector.get("select * from botsettings where name = 'ticket_message_id'", "value", false);
 			cat_id = SQLconnector.get("select * from botsettings where name = 'ticket_category_id'", "value", false);
 			resp_id = SQLconnector.get("select * from botsettings where name = 'ticket_responder_role_id'", "value", false);
-		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 		
 		if (msg_id1.equals(msg_id2)) {
 			P.print("\n[TicketEmoteListener] New ticket in query requested by "
@@ -70,7 +70,7 @@ public class TicketEmoteListener extends ListenerAdapter {
 			
 			//Pauses for 1 second for local cache to refresh.
 			try {TimeUnit.SECONDS.sleep(1);}
-			catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 			
 			//Binds a list of perms to a list.
 			List<Permission> perms = new LinkedList<Permission>();
@@ -100,7 +100,7 @@ public class TicketEmoteListener extends ListenerAdapter {
 				c.sendMessage(embed.build()).queue();
 
 				try {TimeUnit.SECONDS.sleep(1);}
-				catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 				List<Message> msgs = Bot.jda.getTextChannelById(c.getId()).getHistory().retrievePast(1).complete();
 				for (Message m : msgs) {m.addReaction("\uD83D\uDCC1").queue();}
 			}
@@ -120,7 +120,7 @@ public class TicketEmoteListener extends ListenerAdapter {
 				c.sendMessage(embed.build()).queue();
 
 				try {TimeUnit.SECONDS.sleep(1);}
-				catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 				List<Message> msgs = Bot.jda.getTextChannelById(c.getId()).getHistory().retrievePast(1).complete();
 				for (Message m : msgs) {m.addReaction("\uD83D\uDCC1").queue();}
 			}
@@ -136,7 +136,7 @@ public class TicketEmoteListener extends ListenerAdapter {
 		
 		int i = 0;
 		try {i = RandomUtils.nextInt(0, names.size()-1);}
-		catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return names.get(0);}
+		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return names.get(0);}
 		return names.get(i);
 	}
 }

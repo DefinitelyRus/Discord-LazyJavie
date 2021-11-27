@@ -68,7 +68,7 @@ public class TicketMessageExchange extends ListenerAdapter{
 				//Sends to mirror channel.
 				c.sendMessage(embed.build()).queue();
 				try {TimeUnit.SECONDS.sleep(1);}
-				catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+				catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 				
 				try {
 					//Sends reaction emote to origin.

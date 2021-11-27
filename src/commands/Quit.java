@@ -71,14 +71,14 @@ public class Quit extends ListenerAdapter{
 			return;
 		
 		//Any other error
-		} catch (Exception e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString()); return;}
+		} catch (Exception e) {SQLconnector.callError(e); P.print(e.toString()); return;}
 	}
 	
 	//For use in UI.
 	public static void softExit() {
 		P.print("Shutting down " + Bot.VERSION);
 		try {TimeUnit.SECONDS.sleep(5);}
-		catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+		catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 		Bot.jda.shutdown();
 	}
 	

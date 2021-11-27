@@ -8,7 +8,31 @@ It features a REPORT system where either one of the participants can flag the co
 suspicious which then allows assigned moderators to view the conversation and take action accordingly.
 
 ## Commands
-To be added.
+Quit
+* `$quit <sdsa>`
+
+TicketMatchup
+* `$end`
+* `$delete`
+
+TicketMatchupBuilder
+* `$setMatchupMessage <message..>`
+* `$setMatchupEmbed <args...>`
+* `$setMatchupChannel <@role> <#channel> <category_name> <archive_category>* <emote1>* <emote2>* <emote3>*`
+* `$setArchiveCategory <archive_category>`
+
+NewMemberPrompter
+* `$setAutomentionChannel <#channel>`
+
+Returns
+* `$botToken`
+* `$ping`
+* `$test`
+* `$spamConsole`
+* `$cmd <message..>`
+* `$hiddenPing <@user>`
+* `$clean`
+* `$rickroll <@user>`
 
 ## Installation
 See the [LazyJavie releases page](https://github.com/DefinitelyRus/LazyJavie/releases) for detailed instructions fit for the version you're interested in using.
@@ -25,3 +49,4 @@ To be added.
 
 ## License
 This project uses GNU General Public License v3.0. See LICENSE for more information.
+

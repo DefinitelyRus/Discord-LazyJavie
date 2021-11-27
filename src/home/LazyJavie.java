@@ -64,7 +64,7 @@ public class LazyJavie {
 			
 			//Waits until the bot is ready. (Otherwise, the code will continue but the cache isn't yet ready, causing errors.)
 			try {Bot.jda.awaitReady();}
-			catch (InterruptedException e) {SQLconnector.callError(e.toString(), ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
 			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
 			
 			return;
