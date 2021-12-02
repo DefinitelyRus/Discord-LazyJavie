@@ -38,12 +38,7 @@ public class SQLconnector {
 	
 	private static Connection conn = null;
 	public static Connection getConn() throws SQLException {
-	    if (conn == null) {
-	    	try {Class.forName("org.sqlite.JDBC");}
-	    	catch (ClassNotFoundException e) {P.print(ExceptionUtils.getStackTrace(e));}
-	    	conn = DriverManager.getConnection(DB_ADDRESS, DB_LOGIN_ID, dbPass);
-	    } 
-	    else if (conn.isClosed()) {
+	    if (conn == null || conn.isClosed()) {
 	    	try {Class.forName("org.sqlite.JDBC");}
 	    	catch (ClassNotFoundException e) {P.print(ExceptionUtils.getStackTrace(e));}
 	    	conn = DriverManager.getConnection(DB_ADDRESS, DB_LOGIN_ID, dbPass);
@@ -78,6 +73,7 @@ public class SQLconnector {
 			statement.execute(exeScript);
 			
 			if (tp == true) {P.print("|[SQLcA-4] Done!");}
+			connection.close();
 		}
 		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
@@ -117,7 +113,8 @@ public class SQLconnector {
 			//Returns the requested record.
 			if (tp == true) {P.print("|[SQLcB-4] Outputting results...");}
 			while (results.next()) {returnMsg = results.getString(toReturn);}
-			
+
+			connection.close();
 			return returnMsg;
 		}
 		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return "Error encountered: " + e;}
@@ -162,7 +159,8 @@ public class SQLconnector {
 			//Returns the requested record.
 			if (tp == true) {P.print("|[SQLcB-4] Outputting results...");}
 			while (results.next()) {returnList.add(results.getString(toReturn));}
-			
+
+			connection.close();
 			return returnList;
 		}
 		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return returnList;}
@@ -195,6 +193,8 @@ public class SQLconnector {
 				catch (SQLException e2) {P.print("Error encountered (skipping): " + e2.toString());}
 			}
 			P.print("|[SQLcD-4] New database created.\n");
+			
+			statement.getConnection().close();
 		}
 		catch (Exception e) {SQLconnector.callError(e); P.print(e.toString());}
 	}
@@ -242,7 +242,7 @@ public class SQLconnector {
 	 */
 	public static void callError(Throwable exception) {
 
-		String errorLabel = exception.getCause().getMessage();
+		String errorLabel = exception.getMessage();
 		String stackTrace = ExceptionUtils.getStackTrace(exception);
 
 		P.print("\nError Received: \n" + stackTrace);
@@ -253,6 +253,7 @@ public class SQLconnector {
 			Connection connection = getConn();
 			Statement statement = connection.createStatement();
 			statement.execute(exeScript);
+			connection.close();
 		}
 		catch (SQLException e) {P.print("[SQLconnector] callError() failed. Please send the error code to the developer.");}
 		catch (Exception e) {P.print("[SQLconnector] callError() failed. Please send the error code to the developer.");}
@@ -282,7 +283,8 @@ public class SQLconnector {
 			//Gets the number of columns.
 			results = statement.executeQuery(getY);
 			y = results.getMetaData().getColumnCount();
-			
+
+			connection.close();
 		} catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString());}
 		int[] XY = {x, y};
 		return XY;
@@ -393,6 +395,7 @@ public class SQLconnector {
 			P.print("lazyjavie.db exists, fully readable and writable.");
 			
 			//Closes the connection then returns the result.
+			connection.close();
 			return true;
 		}
 		catch (SQLException e) {SQLconnector.callError(e); P.print(e.toString()); return false;}

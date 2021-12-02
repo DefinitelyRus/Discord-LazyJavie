@@ -67,7 +67,7 @@ public class P {
 		try {LazyJavieUI.getConsoleOutput().setText(newString);}
 		catch (Exception e) {
 			try {
-				if (!e.toString().equals(expectedNullPointerError)) {SQLconnector.callError(e); printraw(e.toString());}
+				if (!e.toString().startsWith(expectedNullPointerError)) {SQLconnector.callError(e); printraw(e.toString());}
 			} catch (Exception e1) {SQLconnector.callError(e1); P.printraw(e1.toString());}
 		}
 	}
@@ -144,9 +144,9 @@ public class P {
 		
 		//Attempts to get additional names from database.
 		try {
-			List<String> moreNames =
-				SQLconnector.getList("select name from customNames", "name", false);
-			names.addAll(moreNames);
+			//List<String> moreNames =
+				//SQLconnector.getList("select name from customNames", "name", false);
+			//names.addAll(moreNames);
 		} catch (Exception e) { //TODO Replace this exception class with something more specific.
 			P.print("[P] Random name custom list not found. Skipping...");
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -105,11 +106,29 @@ public class DiscordUtil {
 		}
 		else {
 			try {
-				message = LazyJavie.pendingLog + message;
-				Bot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("`" + message + "`").queue();
-				LazyJavie.pendingLog.setLength(0);
+				LazyJavie.pendingLog.append(message + "\n");
+				message = LazyJavie.pendingLog.toString();
+				
+				if (message.length() > 2000) {
+					LazyJavie.pendingLog = new StringBuffer();
+					return;
+				}
+				else {
+					Bot.jda.getGuildById(guildId).getTextChannelById(channelId).sendMessage("`" + message + "`").queue();
+					LazyJavie.pendingLog = new StringBuffer();
+				}
+			} catch (OutOfMemoryError e) {
+				Bot.jda.getPresence().setActivity(Activity.listening("to OutOfMemoryError"));
+				Bot.isAwake = false;
+				Bot.currentChannel = null;
+				Bot.ticketEmbed = null;
+				Bot.ticketMessage = null;
+				LazyJavie.pendingLog = null;
+				LazyJavie.isReady = false;
+				SQLconnector.callError(e);
 			} catch (Exception e) {
 				LazyJavie.pendingLog.append(message);
+				SQLconnector.callError(e);
 			}
 		}
 	}

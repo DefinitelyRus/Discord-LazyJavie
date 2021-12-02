@@ -191,6 +191,8 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 					SQLconnector.update("update botsettings set value = '" + role_id + "' where name = 'matchup_moderator_role_id'", false);
 					
 					DiscordUtil.printsend(event, "Matchup prompt fully created.");
+					Bot.ticketEmbed = null;
+					Bot.ticketMessage = null;
 					return;
 				}
 			}

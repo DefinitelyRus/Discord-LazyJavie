@@ -35,21 +35,19 @@ public class Bot {
 	
 	//Initialization of user-coded objects and variables
 	public static final String VERSION = "LazyJavie v2.0 ALPHA";
-	public static JDA jda;
-	public static boolean isAwake = false;
-	public static String ticketMessage = "Need help? Click the emote below!";
-	public static MessageEmbed ticketEmbed = null;
-	public static List<Integer> activeTickets = new LinkedList<Integer>();
-	public static List<Integer> activeMatches = new LinkedList<Integer>();
-	
-	//Variables changeable via commands.
 	public static boolean tokenOverride = false;
 	public static String token = "";
-	public static String prefix = "$";
-	public static Object currentChannel;
-	public static boolean muted = false;
-	public static boolean ticketsEnabled = false;
-	public static String modRoomId = "821027416607555615";
+	public static JDA jda;
+	public static List<Integer> activeTickets = new LinkedList<Integer>();
+	public static List<Integer> activeMatches = new LinkedList<Integer>();
+	public static boolean isAwake = false;
+	
+	//Variables changeable via commands.
+	public static final String prefix = "$"; //To be made modifiable via command.
+	public static Object currentChannel; //Used in ConsoleCallables
+	public static boolean ticketsEnabled = false; //Used in TicketAutoPrompter
+	public static String ticketMessage = "Need help? Click the emote below!"; //Used in TicketHostBuilder and TicketMatchupBuilder
+	public static MessageEmbed ticketEmbed = null; //Used in TicketHostBuilder and TicketMatchupBuilder
 	
 	public static boolean start() {
 		try {
