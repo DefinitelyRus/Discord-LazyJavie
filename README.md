@@ -38,7 +38,7 @@ Returns
 See the [LazyJavie releases page](https://github.com/DefinitelyRus/LazyJavie/releases) for detailed instructions fit for the version you're interested in using.
  
 ## How to invite
-Watch the **How to invite** portion of [this video].(https://youtu.be/Dq40V9BhbwU?t=202)
+Watch the **How to invite** portion of [this video](https://youtu.be/Dq40V9BhbwU?t=202).
  
 ## Future Updates
 To be added.
