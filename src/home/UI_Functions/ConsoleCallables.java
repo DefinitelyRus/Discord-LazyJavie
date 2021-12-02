@@ -3,9 +3,10 @@ package home.UI_Functions;
 import java.awt.Choice;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import commands.ConsoleCmd;
 import commands.Quit;
 import home.Bot;
@@ -42,7 +43,7 @@ public class ConsoleCallables {
 			//Waits until the bot is ready. (Otherwise, the code will continue but the cache isn't yet ready, causing errors.)
 			try {Bot.jda.awaitReady();}
 			catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
-			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (NullPointerException e) {SQLconnector.callError(e); P.print(e.toString());}
 			button.setEnabled(true);
 			
 			list.add("- Select text channel -");

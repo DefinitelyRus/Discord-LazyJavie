@@ -1,9 +1,7 @@
-package commands;
+package commands.matchup;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import home.Bot;
 import home.DiscordUtil;
@@ -225,7 +223,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 	}
 
 	private void sendFail(GuildMessageReceivedEvent event) {
-		String descText = "\n`" + Bot.prefix + "setMatchupChannel <@role>¹ <channel-name>² <category_name>³ <archive_name>* <:emote1:>* <:emote2:>* <:emote3:>*`\n\n" +
+		String descText = "\n`" + Bot.prefix + "setMatchupChannel <@role>Â¹ <channel-name>Â² <category_name>Â³ <archive_name>* <:emote1:>* <:emote2:>* <:emote3:>*`\n\n" +
 							"[1] @mention the role you want to assign as moderators." +
 							"[2] Don't #mention the text channel, only enter the name.\n" +
 							"[3] Use underscores ( _ ) instead of spaces for entering categories.\n" +
@@ -233,7 +231,7 @@ public class TicketMatchupBuilder extends ListenerAdapter{
 							"Sample command:\n `" + Bot.prefix + "setMatchupChannel @Moderators chat-matchup matchup_channels archive_channels :dab:`\n\n" +
 							"You can use `" + Bot.prefix + "setMatchupMessage` OR `" + Bot.prefix + "setMatchupEmbed` to change the queue manager message. " +
 							"You can also change the archive category after creating the queue manager using `" + Bot.prefix + "setArchiveCategory`.";
-		String footText = "Made with ❤ by DefinitelyRus.";
+		String footText = "Made with â�¤ by DefinitelyRus.";
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(0xD82D42);
 		builder.setTitle("That's not how you do it!");

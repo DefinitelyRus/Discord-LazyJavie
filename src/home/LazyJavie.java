@@ -4,8 +4,6 @@ import java.sql.SQLException;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import commands.Quit;
 
 public class LazyJavie {
@@ -65,7 +63,7 @@ public class LazyJavie {
 			//Waits until the bot is ready. (Otherwise, the code will continue but the cache isn't yet ready, causing errors.)
 			try {Bot.jda.awaitReady();}
 			catch (InterruptedException e) {SQLconnector.callError(e); P.print(e.toString());}
-			catch (NullPointerException e) {SQLconnector.callError(e.toString() + " - likely caused by bad connection.", ExceptionUtils.getStackTrace(e)); P.print(e.toString());}
+			catch (NullPointerException e) {SQLconnector.callError(e); P.print("[LazyJavie] NullPointerException encountered; likely caused by bad connection.");}
 			
 			return;
 		

@@ -1,4 +1,4 @@
-package commands;
+package commands.matchup;
 
 import java.awt.Color;
 import java.time.temporal.TemporalAccessor;
@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import home.Bot;
 import home.DiscordUtil;
@@ -454,7 +452,7 @@ public class TicketMatchup extends ListenerAdapter {
 					+ "*Use this if you suspect the other person of anything malicious.*\n\n"
 					+ "Clicking :octagonal_sign: or typing `" + Bot.prefix + "end` will close this conversation without summoning moderators.\n"
 					+ "*Use this if you only want to end the conversation.*";
-			String footer = "Made with ❤ by DefinitelyRus.";
+			String footer = "Made with â�¤ by DefinitelyRus.";
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.setColor(0xD82D42);
 			embedBuilder.setTitle(title);

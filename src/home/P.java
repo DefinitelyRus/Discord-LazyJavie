@@ -68,7 +68,7 @@ public class P {
 		catch (Exception e) {
 			try {
 				if (!e.toString().equals(expectedNullPointerError)) {SQLconnector.callError(e); printraw(e.toString());}
-			} catch (Exception e1) {SQLconnector.callError(e1.toString(), ExceptionUtils.getStackTrace(e1)); P.printraw(e1.toString());}
+			} catch (Exception e1) {SQLconnector.callError(e1); P.printraw(e1.toString());}
 		}
 	}
 	

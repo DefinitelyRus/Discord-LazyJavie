@@ -1,4 +1,4 @@
-package commands;
+package commands.unused;
 
 import home.Bot;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;

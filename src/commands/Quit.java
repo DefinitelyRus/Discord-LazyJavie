@@ -2,8 +2,6 @@ package commands;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import home.Bot;
 import home.DiscordUtil;
 import home.P;
@@ -23,7 +21,6 @@ public class Quit extends ListenerAdapter{
 		
 		
 		String[] args = event.getMessage().getContentRaw().split("\\s+");
-		String msg = event.getMessage().getContentRaw();
 		
 		try {
 			if (!args[0].equalsIgnoreCase(Bot.prefix + "quit")) return;
@@ -67,7 +64,6 @@ public class Quit extends ListenerAdapter{
 		} catch (ArrayIndexOutOfBoundsException e) {
 			P.print("Error ignored: Missing args.");
 			DiscordUtil.send(event, ":warning: Are you sure you want to disconnect the bot?\nEnter `" +Bot.prefix+ "quit confirm` to confirm.");
-			SQLconnector.callError(msg, "[QUIT] MISSING ARGS");
 			return;
 		
 		//Any other error

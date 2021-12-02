@@ -242,7 +242,7 @@ public class SQLconnector {
 	 */
 	public static void callError(Throwable exception) {
 
-		String errorLabel = e.getCause();
+		String errorLabel = exception.getCause().getMessage();
 		String stackTrace = ExceptionUtils.getStackTrace(exception);
 
 		P.print("\nError Received: \n" + stackTrace);
