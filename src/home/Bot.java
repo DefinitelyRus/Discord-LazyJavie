@@ -34,7 +34,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class Bot {
 	
 	//Initialization of user-coded objects and variables
-	public static final String VERSION = "LazyJavie v2.0 ALPHA";
+	public static final String VERSION = "LazyJavie v2.2 ALPHA";
 	public static boolean tokenOverride = false;
 	public static String token = "";
 	public static JDA jda;
@@ -77,6 +77,8 @@ public class Bot {
 			    //Closes the scanner.
 			    scanner.close();
 			    P.print("|Scanner closed.");
+			    
+			    
 			    
 			} else {P.print("|Getting token from control panel"); P.print("[A-2] Token assigned: " + token);}
 		    

@@ -174,81 +174,13 @@ public class Returns extends ListenerAdapter{
 			return;
 		}
 		
-		//TODO Create a help class which contains proper functions for command-specific instructions.
-//		//[HELP] Displays a list of available commands and their usage.-----------------------------------------
-//		if(args[0].equalsIgnoreCase(Bot.prefix + "help")) {
-//			P.print("\n[Returns] Requesting help list: " + event.getMember().getUser().getName());
-//			
-//			//Initialization
-//			String memberName = event.getMember().getUser().getName();
-//			boolean isAdmin = event.getMember().hasPermission(Permission.ADMINISTRATOR);
-//			LinkedList<String> cmdlist = null;
-//			LinkedList<String> dsclist = null;
-//			LinkedList<String> foradminlist = null;
-//			String[] cmdarray = {};
-//			String[] dscarray = {};
-//			String[] foradminarray = {};
-//			String output = "";
-//			
-//			try {
-//				P.print("Getting lists from database...");
-//				cmdlist = SQLconnector.getList("select * from Bot.helplist", "cmd", false);
-//				dsclist = SQLconnector.getList("select * from Bot.helplist", "dsc", false);
-//				foradminlist = SQLconnector.getList("select * from Bot.helplist", "adminonly", false);
-//				
-//				P.print("Converting to arrays...");
-//				cmdlist.toArray(cmdarray);
-//				dsclist.toArray(dscarray);
-//				foradminlist.toArray(foradminarray);
-//				
-//			}
-//	    	catch (LoginException e) {P.print("Error encountered: " + e.toString()); SQLconnector.callError(msg, e.toString()); return;}
-//			catch (SQLException e) {P.print("Error encountered: " + e.toString()); SQLconnector.callError(msg, e.toString()); return;}
-//			catch (Exception e) {P.print("Error encountered: " + e.toString()); SQLconnector.callError(msg, e.toString()); return;}
-//			
-//			//<HELP: MISSING INFO>
-//			P.print("Checking for missing info...");
-//			if (cmdarray.length != dscarray.length) {
-//				//TODO Send error message
-//				P.print("Error raised: Missing commands or descriptions.");
-//				P.print("CMDs: " + cmdarray.length + "; DSCs: " + dscarray.length);
-//				return;
-//			
-//			//<HELP: SUCCESS>
-//			} else {
-//				P.print("Listing available commands...");
-//				int cmdcount = cmdlist.size();
-//				P.print("# of available commands: " + cmdcount);
-//				P.print(String.join(", ", cmdlist));
-//				for (int i = 1; i < cmdcount; i++) {
-//					int foradmin = Integer.parseInt(foradminlist.get(i));
-//					if (isAdmin == true && foradmin == 1) {
-//						P.print("|Added " + cmdlist.get(i) + ".");
-//						output = output + "\n\n> [ADMIN] " + Bot.prefix + cmdlist.get(i) + " :\n" + dsclist.get(i);
-//					}
-//					else if (isAdmin == false && foradmin == 1) {
-//						P.print("|Skipped " + cmdlist.get(i) + ".");
-//						continue;
-//						}
-//					else {
-//						P.print("|Added " + cmdlist.get(i) + ".");
-//						output = output + "\n\n> " + Bot.prefix + cmdlist.get(i) + " :\n" + dsclist.get(i);
-//					}
-//				}
-//				output = output + "```";
-//				P.print("Finalizing output...");
-//				//P.print(output);
-//				//Embed block
-//				EmbedBuilder help = new EmbedBuilder();
-//				help.setColor(0xffae00);
-//				//TODO Put all commands in a list, then use a FOR loop to append each command to this output message.
-//				//Ps. put the list in another class or right above the BOT TOKEN code block.
-//				help.addField("     Prefix: "+ Bot.prefix +"\nCurrent commands: ", output, true);
-//				help.setFooter("Requested by " + memberName , event.getMember().getUser().getAvatarUrl());
-//				event.getChannel().sendMessage(help.build()).queue();
-//				P.print("Done!");
-//				return;
-//			}
-//		}
+		//[HELP] Sends a link to the GitHub repo.
+		if (args[0].equalsIgnoreCase(Bot.prefix + "help")) {
+			P.print("\n[Returns] Requesting help list: " + requestby);
+			DiscordUtil.send(event, "Here's the link to the public GitHub repository. "
+					+ "You can help debug and update this bot with your contributions!\nhttps://github.com/DefinitelyRus/LazyJavie/tree/UI-Branch"
+					+ "\n\n**The available commands for " + Bot.VERSION + " are listed here:**\nhttps://github.com/DefinitelyRus/LazyJavie/tree/UI-Branch#commands");
+			return;
+		}
 	}
 }

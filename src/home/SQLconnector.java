@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.login.LoginException;
@@ -244,8 +245,10 @@ public class SQLconnector {
 
 		String errorLabel = exception.getMessage();
 		String stackTrace = ExceptionUtils.getStackTrace(exception);
-
-		P.print("\nError Received: \n" + stackTrace);
+		
+		if (!(exception instanceof RejectedExecutionException))
+			P.print("\nError Received: \n" + stackTrace);
+		
 		String exeScript = "insert into errorlog (err_type, err_stacktrace, eventdate, appver) values ('" + errorLabel + "', '" + stackTrace + "', datetime(), '" +Bot.VERSION+ "');";
 		dbPass = getPass();
 		

@@ -273,9 +273,10 @@ public class TicketMatchup extends ListenerAdapter {
 			
 			//TODO Something's broken here
 			for (Message m : messages) {
-				for (MessageEmbed e : m.getEmbeds()) {
-					if (e.getTitle().equals("Stuff and things you need to know!")) {
+				for (@SuppressWarnings("unused") MessageEmbed e : m.getEmbeds()) {
+					//if (e.getTitle().equals("Stuff and things you need to know!")) { //Random NullPointerException...?
 						String emoteCodePoint = event.getReactionEmote().getAsCodepoints();
+						P.print(emoteCodePoint);
 						if (emoteCodePoint.equals("U+1f6d1")) {
 							P.print("[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
 							DiscordUtil.send(event, "Closing ticket...");
@@ -283,7 +284,16 @@ public class TicketMatchup extends ListenerAdapter {
 							endMatch(event);
 							return;
 						}
-					}
+						
+						else if (emoteCodePoint.equals("U+26a0")) {
+							P.print("[TicketMatchup] Report request by: " + event.getMember().getUser().getAsTag());
+							DiscordUtil.send(event, "Reporting ticket...");
+							event.retrieveMessage().complete().removeReaction("U+26a0", event.getUser()).queue();
+							endMatch(event);
+							report(event);
+							return;
+						}
+					//}
 				}
 			}
 		}
@@ -304,6 +314,15 @@ public class TicketMatchup extends ListenerAdapter {
 			P.print("\n[TicketMatchup] Close ticket request by: " + event.getMember().getUser().getAsTag());
 			DiscordUtil.send(event, "Closing ticket...");
 			endMatch(event);	
+			return;
+		}
+		
+		//[REPORT]
+		else if (messageSplit[0].equals(Bot.prefix + "report") && senderChannel.getName().startsWith("match")) {
+			P.print("\n[TicketMatchup] Report request by: " + event.getMember().getUser().getAsTag());
+			DiscordUtil.send(event, "Reporting ticket...");
+			endMatch(event);
+			report(event);
 			return;
 		}
 		
@@ -452,7 +471,7 @@ public class TicketMatchup extends ListenerAdapter {
 					+ "*Use this if you suspect the other person of anything malicious.*\n\n"
 					+ "Clicking :octagonal_sign: or typing `" + Bot.prefix + "end` will close this conversation without summoning moderators.\n"
 					+ "*Use this if you only want to end the conversation.*";
-			String footer = "Made with â�¤ by DefinitelyRus.";
+			String footer = "Made with ❤️ by DefinitelyRus.";
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.setColor(0xD82D42);
 			embedBuilder.setTitle(title);
@@ -495,6 +514,45 @@ public class TicketMatchup extends ListenerAdapter {
 		}
 	}
 	
+	private void report(GenericGuildMessageEvent event) {P.print("|Initializing...");
+		for (TextChannel channel2 : event.getGuild().getTextChannels()) {
+			final TextChannel channel1 = event.getChannel();
+			final String name = channel2.getName();
+			final String matchCode = channel1.getName().replace("match1-", "").replace("match2-", "");
+			//Could cause issues later. The channels have already been renamed but for some reason it still sees it as its original name.
+			
+			/*
+			 * This loops attempts to look for channel2 by checking if the current channel name
+			 * contains the same match code but not the exact same name as channel1.
+			 * 
+			 * channel1 is the origin channel that triggered this command.
+			 * channel2 is the corresponding channel.
+			 */
+			
+			if (name.endsWith(matchCode) && !name.equals(channel1.getName())) {
+				final ChannelManager c1Manager = channel1.getManager();
+				final ChannelManager c2Manager = channel2.getManager();
+				final List<Permission> perms = new LinkedList<Permission>();
+				perms.add(Permission.VIEW_CHANNEL); perms.add(Permission.MESSAGE_ADD_REACTION);
+				perms.add(Permission.MESSAGE_ATTACH_FILES); perms.add(Permission.MESSAGE_EXT_EMOJI);
+				perms.add(Permission.MESSAGE_HISTORY); perms.add(Permission.MESSAGE_READ);
+				perms.add(Permission.MESSAGE_WRITE); perms.add(Permission.USE_SLASH_COMMANDS);
+				final String roleId = SQLconnector.get("select value from botsettings where name = 'matchup_moderator_role_id'", "value", false);
+				
+				c1Manager.setName(channel1.getName().replace("match", "closed"))
+					.putPermissionOverride(event.getGuild().getRoleById(roleId), perms, null).queue();
+				c2Manager.setName(name.replace("match", "closed"))
+					.putPermissionOverride(event.getGuild().getRoleById(roleId), perms, null).queue();
+				P.print("|Added permissions for " + event.getGuild().getRoleById(roleId).getName() + "...");
+				
+				DiscordUtil.printsend(event, "The " + event.getGuild().getRoleById(roleId).getAsMention() + " will be here soon!");
+				return;
+			}
+		}
+		DiscordUtil.printsend(event, "No partner channel found. Please delete this channel manually. Possible storage leak (unusused stored data not deleted); consider a database cleanup.");
+		return;
+	}
+	
 	/**
 	 * Closes and archives the ticket.
 	 * This will rename the channels, move to the archives category, and remove member permissions.
@@ -529,19 +587,22 @@ public class TicketMatchup extends ListenerAdapter {
 				List<String> memberIdList = (SQLconnector.getList("select * from matchlist where matchcode = '" + matchCode + "'", "id", false));
 				
 				//Changes name to closed1-xxxxx and closed2-xxxxx.
+				//This removes permissions for both users on both channels because I'm lazy.
 				P.print("|Archiving " + channel1.getName() + "...");
 				c1Manager.setName(channel1.getName().replace("match", "closed"))
 				.setParent(archiveCategory)
+				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(1)), null, perms)
 				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(2)), null, perms)
 				.queue();
-				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(2)).getUser().getAsTag() + "...");
+				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(1)).getUser().getAsTag() + "...");
 
 				P.print("|Archiving " + channel2.getName() + "...");
 				c2Manager.setName(name.replace("match", "closed"))
 				.setParent(archiveCategory)
 				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(1)), null, perms)
+				.putPermissionOverride(event.getGuild().getMemberById(memberIdList.get(2)), null, perms)
 				.queue();
-				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(1)).getUser().getAsTag() + "...");
+				P.print("|Removed permissions for " + event.getGuild().getMemberById(memberIdList.get(2)).getUser().getAsTag() + "...");
 				
 				P.print("|Deleting leftover records from database...");
 				SQLconnector.update("delete from matchlist where matchcode = '" + matchCode + "'", false);
